@@ -5,6 +5,7 @@ public class Display {
     private final HomeScreen homeScreen = new HomeScreen();
     private final Background background = new Background(5, 5);
     private final CreationScreen creationScreen = new CreationScreen();
+    private final NinjaPlacing ninjaPlacing = new NinjaPlacing();
 
     public void titleScreen(){
         titleScreen.jumpStart();
@@ -22,5 +23,11 @@ public class Display {
         background.setTitle(title);
         background.showBackground();
     }
+
+    public void placeNinjas(String title){
+        ninjaPlacing.getCoordenates(title);
+    }
+
+
 
 }

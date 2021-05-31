@@ -2,6 +2,7 @@ package ar.com.konomo.managers;
 
 import ar.com.konomo.display.Display;
 import ar.com.konomo.entity.Player;
+import ar.com.konomo.validators.WinValidator;
 
 
 public class Konomo {
@@ -25,13 +26,20 @@ public class Konomo {
                     create();
                     //crea el player 1
                     player1 = playerManager.create(NINJAS, BOARD_SIZE);
+                    playerManager.setPlayerVariables(player1);
                     play();
+                    try {
+                        System.out.println(player1.getName());
+                    } catch (Exception ex) {
+                        System.out.println("pinchoooo");
+                    }
 
                     userOption = null;
                 }
                 case "C" -> {
                     join();
                     player2 = playerManager.create(NINJAS, BOARD_SIZE);
+                    playerManager.setPlayerVariables(player2);
                     userOption = null;
                     play();
                 }
@@ -75,7 +83,9 @@ public class Konomo {
         while (!gameOver) {
 
 
-            gameOver = true;
+            if (WinValidator.winConditionsMet()) {
+                gameOver = true;
+            }
         }
         System.out.println("El ganador es: " + player1.getName());
     }

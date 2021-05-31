@@ -1,13 +1,28 @@
 package ar.com.konomo.entity;
 
+import java.util.List;
+
 public class Player {
     private String name;
-    private Chuunin [] myNinjas;
+    private List <Shinobi> myNinjas;
     private Board localBoard;
     private String[][] enemyBoard;
 
 
     public void placeTroops(){
+        try {
+            for (Shinobi ninja: myNinjas
+                 ) {
+                if (ninja.isJounin()) {
+                    System.out.println("Coordenadas del Comandante:");
+                } else {
+                    System.out.println("Coordenadas del ninja: ");
+                }
+
+            }
+        } catch (Exception ex) {
+            System.out.println("Ocurrió un problema al ubicar los ninjas!");
+        }
 
     }
 
@@ -19,11 +34,11 @@ public class Player {
         this.name = name;
     }
 
-    public Chuunin[] getMyNinjas() {
+    public List <Shinobi> getMyNinjas() {
         return myNinjas;
     }
 
-    public void setMyNinjas(Chuunin[] myNinjas) {
+    public void setMyNinjas(List <Shinobi> myNinjas) {
         this.myNinjas = myNinjas;
     }
 

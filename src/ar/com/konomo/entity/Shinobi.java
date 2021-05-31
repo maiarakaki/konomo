@@ -2,10 +2,21 @@ package ar.com.konomo.entity;
 
 import ar.com.konomo.enums.Action;
 
-public class Chuunin extends Placeable{
+public class Shinobi extends Placeable{
     private boolean isAlive;
     private Action lastActionTaken;
     private int stamina;
+    private boolean isJounin;
+
+    @Override
+    public void setxLocation(int xLocation) {
+        super.setxLocation(xLocation);
+    }
+
+    @Override
+    public void setyLocation(int yLocation) {
+        super.setyLocation(yLocation);
+    }
 
     public boolean isAlive() {
         return isAlive;
@@ -29,5 +40,13 @@ public class Chuunin extends Placeable{
 
     public void setStamina(int stamina) {
         this.stamina = stamina;
+    }
+
+    public void setJounin(boolean jounin) {
+        isJounin = jounin;
+    }
+
+    public boolean isJounin(){
+        return isJounin;
     }
 }
