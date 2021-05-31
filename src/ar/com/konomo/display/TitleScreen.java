@@ -1,27 +1,45 @@
 package ar.com.konomo.display;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class TitleScreen {
     static int SIZE = 10;
-    static String[][] screen = new String[SIZE][SIZE];
-    static String message= "Kokumo Monogatari";
+    Scanner scan = new Scanner(System.in);
+    private final String[][] screen = new String[SIZE][SIZE];
+    private final String message= "Kokumo Monogatari";
+    private final String nextMessage = "Press Enter key to continue . . . ";
+
 
     public void jumpStart(){
-        fillBlanks();
-        screen[5][5] = message;
 
-        for (int i = 0 ; i < screen.length; i++) {
-            for (int j = 0 ; j < screen[0].length; j++) {
-                System.out.print(screen[i][j]  + " " );
+        fillBlanks();
+        screen[SIZE /2][SIZE/2] = message;
+        screen[SIZE/2 +2][SIZE / 2 - 2] = nextMessage;
+
+        for (String[] strings : screen) {
+            for (String string : strings) {
+                System.out.print(string + " ");
             }
             System.out.print("\n");
         }
+
+        Read();
     }
 
-    static void fillBlanks() {
-        for (int i = 0 ; i < screen.length; i++) {
-            for (int j = 0 ; j < screen[0].length; j++) {
-                screen[i][j] = "    ";
+    private void fillBlanks() {
+        try {
+            for (String[] row : screen) {
+                Arrays.fill(row, " ");
             }
+
+        } catch (Exception ex) {
+            System.out.println("ESTO NO FUNCAAA");
         }
+
+    }
+
+    void Read()
+    {
+        scan.nextLine();
     }
 }

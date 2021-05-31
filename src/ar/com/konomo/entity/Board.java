@@ -1,6 +1,11 @@
 package ar.com.konomo.entity;
 
 public class Board {
-    static int BOARD_SIZE_X = 5;
-    static int BOARD_SIZE_Y = 5;
+    private Placeable[][] board;
+
+    public Board(int rows, int cols) {
+        board = new  Placeable[rows][cols];
+    }
+
+
 }
