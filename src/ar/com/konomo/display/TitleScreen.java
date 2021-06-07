@@ -16,26 +16,26 @@ public class TitleScreen {
         screen[SIZE /2][SIZE/2] = message;
         screen[SIZE/2 +2][SIZE / 2 - 2] = nextMessage;
 
+        print(screen);
+
+
+        Read();
+    }
+
+    private void print(String[][] screen) {
         for (String[] strings : screen) {
             for (String string : strings) {
                 System.out.print(string + " ");
             }
             System.out.print("\n");
         }
-
-        Read();
     }
 
+
     private void fillBlanks() {
-        try {
-            for (String[] row : screen) {
+        for (String[] row : screen) {
                 Arrays.fill(row, " ");
-            }
-
-        } catch (Exception ex) {
-            System.out.println("ESTO NO FUNCAAA");
         }
-
     }
 
     void Read()

@@ -1,5 +1,7 @@
 package ar.com.konomo.entity;
 
+import ar.com.konomo.enums.NinjaType;
+
 import java.util.List;
 
 public class Player {
@@ -8,23 +10,6 @@ public class Player {
     private Board localBoard;
     private String[][] enemyBoard;
 
-
-    public void placeTroops(){
-        try {
-            for (Shinobi ninja: myNinjas
-                 ) {
-                if (ninja.isJounin()) {
-                    System.out.println("Coordenadas del Comandante:");
-                } else {
-                    System.out.println("Coordenadas del ninja: ");
-                }
-
-            }
-        } catch (Exception ex) {
-            System.out.println("Ocurrió un problema al ubicar los ninjas!");
-        }
-
-    }
 
     public String getName() {
         return name;

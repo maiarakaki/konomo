@@ -4,6 +4,8 @@ import ar.com.konomo.validators.LegitCoordinateValidator;
 
 import java.util.Scanner;
 
+import static ar.com.konomo.Main.NINJAS;
+
 public class NinjaPlacing {
     Scanner scan = new Scanner(System.in);
     Background background;
@@ -19,23 +21,25 @@ public class NinjaPlacing {
         boardMaker.create(borders);
     }
 
-    public String getCoordenates(String title){
+    public String[] getCoordenates(String title){
         background.setTitle(title);
         background.showBackground();
         board = boardMaker.getBoard();
         int i = 0;
-        System.out.println("Ingresa las coordenadas para tu ninja " + i+1 +":");
-        String userInput;
-        while (i <3) {
-            printBoard();
-            userInput = scan.nextLine();
+        String entries[] = new String[NINJAS];
 
-            coordinateValidator.validate(userInput);
-
+        printBoard();
+        while (i <NINJAS) {
+            if (i == NINJAS -1) {
+                System.out.println("Ingresa las coordenadas para tu comandante: ");
+            } else {
+                System.out.printf("%s %d %s\n", "Ingresa las coordenadas para tu ninja" ,i+1 ,":");
+            }
+            entries[i] = scan.nextLine();
+            i++;
         }
 
-
-        return scan.nextLine();
+        return entries;
     }
 
     private void printBoard() {

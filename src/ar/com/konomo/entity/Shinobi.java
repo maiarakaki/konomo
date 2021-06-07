@@ -1,12 +1,13 @@
 package ar.com.konomo.entity;
 
 import ar.com.konomo.enums.Action;
+import ar.com.konomo.enums.NinjaType;
 
 public class Shinobi extends Placeable{
     private boolean isAlive;
     private Action lastActionTaken;
     private int stamina;
-    private boolean isJounin;
+    private NinjaType ninjaType;
 
     @Override
     public void setxLocation(int xLocation) {
@@ -42,11 +43,11 @@ public class Shinobi extends Placeable{
         this.stamina = stamina;
     }
 
-    public void setJounin(boolean jounin) {
-        isJounin = jounin;
+    public NinjaType getNinjaType() {
+        return ninjaType;
     }
 
-    public boolean isJounin(){
-        return isJounin;
+    public void setNinjaType(NinjaType ninjaType) {
+        this.ninjaType = ninjaType;
     }
 }

@@ -1,11 +1,17 @@
 package ar.com.konomo.display;
 
+import ar.com.konomo.entity.Player;
+
+import java.util.Scanner;
+
 public class Display {
-    private final TitleScreen titleScreen = new TitleScreen();
-    private final HomeScreen homeScreen = new HomeScreen();
-    private final Background background = new Background(5, 5);
-    private final CreationScreen creationScreen = new CreationScreen();
-    private final NinjaPlacing ninjaPlacing = new NinjaPlacing();
+    private TitleScreen titleScreen;
+    private HomeScreen homeScreen;
+    private Background background;
+    private CreationScreen creationScreen;
+    private PlayerCreationDialogue playerCreation;
+    private NinjaPlacing ninjaPlacing;
+    private Scanner scanner;
 
     public void titleScreen(){
         titleScreen.jumpStart();
@@ -24,10 +30,20 @@ public class Display {
         background.showBackground();
     }
 
-    public void placeNinjas(String title){
-        ninjaPlacing.getCoordenates(title);
+
+    public String [] playerCreation(Player player) {
+        playerCreation.getPlayerName(player);
+        return playerCreation.getPlayerVariables(player);
     }
 
-
+    public Display(){
+        scanner = new Scanner(System.in);
+        titleScreen = new TitleScreen();
+        homeScreen = new HomeScreen();
+        background = new Background(5, 5);
+        creationScreen = new CreationScreen();
+        ninjaPlacing = new NinjaPlacing();
+        playerCreation = new PlayerCreationDialogue(ninjaPlacing, scanner);
+    }
 
 }
