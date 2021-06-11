@@ -1,10 +1,11 @@
 package ar.com.konomo.display;
+import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.Player;
-import ar.com.konomo.validators.CoordinateValidator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-import static ar.com.konomo.Main.NINJAS;
 
 public class PlayerCreationDialogue {
     private Scanner scanner;
@@ -25,11 +26,10 @@ public class PlayerCreationDialogue {
         }
     }
 
-    public String[] getPlayerVariables(Player player){
+    public List<Coordinate> getPlayerVariables(Player player){
 
-        String coordinates[] = new String[NINJAS];
+        List<Coordinate> coordinates= new ArrayList<>();
         try {
-
             coordinates = ninjaPlacing.getCoordenates("Despliega tus ninjas!");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -39,3 +39,5 @@ public class PlayerCreationDialogue {
     }
 
 }
+
+

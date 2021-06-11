@@ -1,7 +1,9 @@
 package ar.com.konomo.display;
 
+import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.Player;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Display {
@@ -31,7 +33,7 @@ public class Display {
     }
 
 
-    public String [] playerCreation(Player player) {
+    public List<Coordinate> playerSettings(Player player) {
         playerCreation.getPlayerName(player);
         return playerCreation.getPlayerVariables(player);
     }

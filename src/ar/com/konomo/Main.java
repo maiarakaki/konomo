@@ -1,9 +1,10 @@
 package ar.com.konomo;
 
 import ar.com.konomo.display.Display;
-import ar.com.konomo.entity.Player;
+import ar.com.konomo.entity.*;
 import ar.com.konomo.managers.GM;
-import java.util.List;
+
+import java.util.*;
 
 public class Main {
     private String ip;
@@ -18,9 +19,39 @@ public class Main {
         Display display = new Display();
         //display.titleScreen();
         //String userOption = display.showOptions();
-        gameManager.validate(display.playerCreation(players.get(0)));
+        List<Coordinate> coordinates = new ArrayList<>();
+        //coordinates= (display.playerSettings(players.get(0)));
+        Coordinate coord1 = new Coordinate(0,1);
+        coordinates.add(coord1);
 
-    }
+        Coordinate coord2 = new Coordinate(0,2);
+        Coordinate coord3 = new Coordinate(0,3);
+
+        coordinates.add(coord2);
+        coordinates.add(coord3);
+
+        boolean allGood = gameManager.validate(coordinates, players.get(0));
+
+        System.out.println(gameManager.getErrors().getErrors().entrySet());
+        gameManager.getErrors().getErrors().forEach((key, value) -> System.out.println(key + " : " + value) );
+
+
+        }
+/*
+        if(allGood) {
+
+                List <Shinobi> ninjas = players.get(0).getMyNinjas();
+                Board board= players.get(0).getLocalBoard();
+                gameManager.place(ninjas, board);
+
+        } else {
+
+
+
+            //TODO ver como avisarle a display que no pude agregar a los ninjas
+        }
+        }
+*/
 
 
 

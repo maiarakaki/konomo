@@ -1,22 +1,22 @@
 package ar.com.konomo.entity;
 
 public abstract class Placeable {
-    private int xLocation;
-    private int yLocation;
+    private int columnIndex;
+    private int rowIndex;
 
-    public int getxLocation() {
-        return xLocation;
+    public int getColumnIndex() {
+        return columnIndex;
     }
 
-    public void setxLocation(int xLocation) {
-        this.xLocation = xLocation;
+    public void setColumnIndex(int columnIndex) {
+        this.columnIndex = columnIndex;
     }
 
-    public int getyLocation() {
-        return yLocation;
+    public int getRowIndex() {
+        return rowIndex;
     }
 
-    public void setyLocation(int yLocation) {
-        this.yLocation = yLocation;
+    public void setRowIndex(int rowIndex) {
+        this.rowIndex = rowIndex;
     }
 }

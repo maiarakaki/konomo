@@ -1,29 +1,38 @@
 package ar.com.konomo.entity;
 
 public class Coordinate {
-    private int y;
-    private String x;
+    private int row;
+    private int column;
+    boolean isValid;
 
-    public Coordinate(int y, String x){
-        this.x = x;
-        this.y = y;
+    public Coordinate(int column, int row){
+        this.column = column;
+        this.row = row;
     }
 
     public Coordinate(){}
 
-    public int getY() {
-        return y;
+    public int getRow() {
+        return row;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setRow(int row) {
+        this.row = row;
     }
 
-    public String getX() {
-        return x;
+    public int getColumn() {
+        return column;
     }
 
-    public void setX(String x) {
-        this.x = x;
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setValid(boolean valid) {
+        isValid = valid;
     }
 }

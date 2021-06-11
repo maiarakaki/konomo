@@ -10,13 +10,13 @@ public class Shinobi extends Placeable{
     private NinjaType ninjaType;
 
     @Override
-    public void setxLocation(int xLocation) {
-        super.setxLocation(xLocation);
+    public void setColumnIndex(int columnIndex) {
+        super.setColumnIndex(columnIndex);
     }
 
     @Override
-    public void setyLocation(int yLocation) {
-        super.setyLocation(yLocation);
+    public void setRowIndex(int rowIndex) {
+        super.setRowIndex(rowIndex);
     }
 
     public boolean isAlive() {

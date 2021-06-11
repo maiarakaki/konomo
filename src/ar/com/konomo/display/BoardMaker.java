@@ -6,7 +6,7 @@ public class BoardMaker {
     static int BORDER_PADDING = 2;
     static int OFFSET = 2;
     static int BOARD_SIZE = 5;
-    static String[] yAxisLabels= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"};
+    public static String[] yAxisLabels= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"};
 
     static String[][] screenBoard = new String[BOARD_SIZE * BORDER_PADDING + OFFSET][BOARD_SIZE  * BORDER_PADDING+ OFFSET];
 
@@ -81,7 +81,14 @@ public class BoardMaker {
         }
     }
 
-
+    public void print() {
+        for (int i = 0 ; i < screenBoard.length; i++) {
+            for (int j = 0 ; j < screenBoard[i].length; j++) {
+                System.out.print(String.format(" %s ", screenBoard[i][j]) );
+            }
+            System.out.print("\n");
+        }
+    }
 }
 
 
