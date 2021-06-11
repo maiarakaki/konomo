@@ -21,11 +21,11 @@ public class CoordinateRangeValidator {
     public boolean validate(Coordinate coordinate){
         boolean isValidX = xIsValid(coordinate.getColumn());
         if (!isValidX) {
-            errors.add(X_OUT_OF_RANGE, X_OUT_OF_RANGE_MSG);
+            errors.add(X_OUT_OF_RANGE +": " + X_OUT_OF_RANGE_MSG);
         }
         boolean isValidY =yIsValid(coordinate.getRow());
         if(!isValidY){
-            errors.add(Y_OUT_OF_RANGE, Y_OUT_OF_RANGE_MSG);
+            errors.add(Y_OUT_OF_RANGE +": " + Y_OUT_OF_RANGE_MSG);
         }
 
         return isValidX && isValidY;
@@ -43,11 +43,11 @@ public class CoordinateRangeValidator {
              coordinate.setValid(xIsValid && yIsValid);
 
              if (!xIsValid) {
-                 errors.add(X_OUT_OF_RANGE, X_OUT_OF_RANGE_MSG + i);
+                 errors.add(X_OUT_OF_RANGE +": " + X_OUT_OF_RANGE_MSG + i);
                  success = false;
              }
              if (!yIsValid) {
-                 errors.add(Y_OUT_OF_RANGE, Y_OUT_OF_RANGE_MSG + i);
+                 errors.add(Y_OUT_OF_RANGE +": " + Y_OUT_OF_RANGE_MSG + i);
                  success = false;
              }
              i++;

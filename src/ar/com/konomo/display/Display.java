@@ -1,8 +1,10 @@
 package ar.com.konomo.display;
 
 import ar.com.konomo.entity.Coordinate;
+import ar.com.konomo.entity.OpError;
 import ar.com.konomo.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,6 +16,7 @@ public class Display {
     private PlayerCreationDialogue playerCreation;
     private NinjaPlacing ninjaPlacing;
     private Scanner scanner;
+    private BoardMaker boardMaker;
 
     public void titleScreen(){
         titleScreen.jumpStart();
@@ -35,8 +38,15 @@ public class Display {
 
     public List<Coordinate> playerSettings(Player player) {
         playerCreation.getPlayerName(player);
-        return playerCreation.getPlayerVariables(player);
+
+        return playerCreation.getPlayerCoordinates();
     }
+
+    public List<Coordinate> ammendCoordinates(List<Coordinate> coordinates, OpError errors){
+        showErrors(errors);
+        return ninjaPlacing.getCoordenates("Intentémoslo de nuevo", coordinates);
+    }
+
 
     public Display(){
         scanner = new Scanner(System.in);
@@ -46,6 +56,19 @@ public class Display {
         creationScreen = new CreationScreen();
         ninjaPlacing = new NinjaPlacing();
         playerCreation = new PlayerCreationDialogue(ninjaPlacing, scanner);
+        boardMaker = new BoardMaker();
+    }
+
+    public void retrieveBoard(Player player){
+        boardMaker.update(player.getLocalBoard());
+        boardMaker.print();
+    }
+
+    private void showErrors(OpError errors){
+        for (String error: errors.getErrors()
+             ) {
+            System.out.println(error);
+        }
     }
 
 }

@@ -37,7 +37,7 @@ public class CoordinateFormalValidator {
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            opError.add(INVALID_INPUT_X, INVALID_INPUT_X_MSG);
+            opError.add(INVALID_INPUT_X +": " + INVALID_INPUT_X_MSG);
         }
         return success;
     }
@@ -50,7 +50,7 @@ public class CoordinateFormalValidator {
             success= true;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            opError.add(INVALID_INPUT_Y, INVALID_INPUT_Y_MSG);
+            opError.add(INVALID_INPUT_Y +": " + INVALID_INPUT_Y_MSG);
         }
         coordinate.setRow(number);
         return success;

@@ -15,7 +15,8 @@ import static ar.com.konomo.Main.NINJAS;
 
 public class GM {
     private Factory factory;
-    private List<Player> players;
+    private Player player1;
+    private Player player2;
     private CoordinateRangeValidator coordinateRangeValidator;
     private CoordinateViabilityValidator coordinateViabilityValidator;
     private CoordinatePositionValidator coordinatePositionValidator;
@@ -23,21 +24,24 @@ public class GM {
 
     public void createGame(){
         factory= new Factory();
-        players = factory.createPlayers(NINJAS, BOARD_SIZE);
+        player1 = factory.createPlayers(NINJAS, BOARD_SIZE);
+        player2 = factory.createPlayers(NINJAS, BOARD_SIZE);
         coordinateRangeValidator = new CoordinateRangeValidator();
         coordinateViabilityValidator =  new CoordinateViabilityValidator();
         coordinatePositionValidator = new CoordinatePositionValidator();
         errors = new OpError();
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public Player getPlayer1() {
+        return player1;
+    }
+    public Player getPlayer2() {
+        return player2;
     }
 
     public boolean validate(List<Coordinate> coordinates, Player player) {
 
         boolean allValid = false;
-        int i = 0;
 
         if (coordinateRangeValidator.validate(coordinates)) {
             setNinjaCoordinates(coordinates, player.getMyNinjas());
@@ -48,13 +52,13 @@ public class GM {
                     setNinjaCoordinates(coordinates, player.getMyNinjas());
                     allValid = true;
                 } else {
-                    errors.add(coordinatePositionValidator.getErrors());
+                    errors.addAll(coordinatePositionValidator.getErrors());
                 }
             } else {
-                errors.add(coordinateViabilityValidator.getErrors());
+                errors.addAll(coordinateViabilityValidator.getErrors());
             }
         } else {
-            errors.add(coordinateRangeValidator.getErrors());
+            errors.addAll(coordinateRangeValidator.getErrors());
         }
         return allValid;
     }
@@ -75,26 +79,19 @@ public class GM {
     }
 
     private void setNinjaCoordinates (List<Coordinate> coords, List<Shinobi> ninjas){
-        int i = 0;
         try {
             for (Coordinate coordinate: coords
-                 ) {
-                if (i == 0) {
-                    ninjas.get(i).setNinjaType(NinjaType.JOUNIN);
+            ) {
+                if (coords.indexOf(coordinate) == NINJAS -1) {
+                    ninjas.get(coords.indexOf(coordinate)).setNinjaType(NinjaType.JOUNIN);
                 } else {
-                    ninjas.get(i).setNinjaType(NinjaType.CHUUNIN);
+                    ninjas.get(coords.indexOf(coordinate)).setNinjaType(NinjaType.CHUUNIN);
                 }
-                ninjas.get(i).setColumnIndex(coordinate.getColumn()-10);
-                ninjas.get(i).setRowIndex(coordinate.getColumn()-10);
-                i++;
+                ninjas.get(coords.indexOf(coordinate)).setColumnIndex(coordinate.getColumn()-10);
+                ninjas.get(coords.indexOf(coordinate)).setRowIndex(coordinate.getRow());
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage() + " en setPleaceableCoords!");
         }
     }
-
-
-    //TODO Recibo una lista de coordenadas. Para cada una, valido si están en rango.
-    // Si están, valido que en esa ubicación no haya otra cosa. Si no están, cambio el flag del Coordinate a invalid ¿cómo burbujeo el error?
-    // Si la ubicación está vacía, enchufo al ninja en el board y le seteo sus coordenads.
 }

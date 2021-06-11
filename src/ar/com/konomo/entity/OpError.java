@@ -1,22 +1,31 @@
 package ar.com.konomo.entity;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpError {
-    private HashMap<Integer, String> errors;
+    private List<String> errorss;
 
-    public HashMap<Integer, String> getErrors() {
-        if (errors == null) {
-            errors = new HashMap<>();
+    public List <String> getErrors(){
+        if (errorss == null) {
+            errorss = new ArrayList<>();
         }
-        return errors;
+        return errorss;
     }
 
-    public void add(int code, String message) {
-        getErrors().put(code, message);
+    public void add(String message) {
+        if (errorss == null) {
+            errorss = new ArrayList<>();
+        }
+        errorss.add(message);
     }
 
-    public void add(OpError opError) {
-        getErrors().putAll(opError.getErrors());
+    public void addAll(OpError opError) {
+        if (errorss == null) {
+            errorss = new ArrayList<>();
+        }
+        errorss.addAll(opError.getErrors());
     }
+
+
 
 }

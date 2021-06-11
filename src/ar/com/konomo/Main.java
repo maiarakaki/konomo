@@ -15,45 +15,34 @@ public class Main {
     public static void main(String[] args) {
         GM gameManager = new GM();
         gameManager.createGame();
-        List<Player> players = gameManager.getPlayers();
+        Player player1= gameManager.getPlayer1();
+        Player player2= gameManager.getPlayer2();
         Display display = new Display();
         //display.titleScreen();
         //String userOption = display.showOptions();
         List<Coordinate> coordinates = new ArrayList<>();
-        //coordinates= (display.playerSettings(players.get(0)));
-        Coordinate coord1 = new Coordinate(0,1);
-        coordinates.add(coord1);
+        coordinates= (display.playerSettings(player1));
 
-        Coordinate coord2 = new Coordinate(0,2);
-        Coordinate coord3 = new Coordinate(0,3);
+/*        { // TODO boletear esto cuando termine las pruebas con las coordenadas
+            Coordinate coord1 = new Coordinate(10, 0);
+            coordinates.add(coord1);
+            Coordinate coord2 = new Coordinate(11, 0);
+            Coordinate coord3 = new Coordinate(13, 0);
+            coordinates.add(coord2);
+            coordinates.add(coord3);
+        }*/
 
-        coordinates.add(coord2);
-        coordinates.add(coord3);
-
-        boolean allGood = gameManager.validate(coordinates, players.get(0));
-
-        System.out.println(gameManager.getErrors().getErrors().entrySet());
-        gameManager.getErrors().getErrors().forEach((key, value) -> System.out.println(key + " : " + value) );
-
-
-        }
-/*
-        if(allGood) {
-
-                List <Shinobi> ninjas = players.get(0).getMyNinjas();
-                Board board= players.get(0).getLocalBoard();
-                gameManager.place(ninjas, board);
-
+        boolean allGood = gameManager.validate(coordinates, player1);
+        if (allGood) {
+            display.retrieveBoard(player1);
         } else {
-
-
-
-            //TODO ver como avisarle a display que no pude agregar a los ninjas
+            while (!allGood) {
+                OpError errors = gameManager.getErrors();
+                coordinates = display.ammendCoordinates(coordinates, errors);
+                allGood = gameManager.validate(coordinates, player1);
+               }
         }
-        }
-*/
-
-
+}
 
     public void setIp(String ip) {
         this.ip = ip;

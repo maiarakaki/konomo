@@ -18,12 +18,16 @@ public class CoordinateViabilityValidator {
     }
 
     public boolean isViable(List<Coordinate> coordinateList){
-        oneAndTwo = compare(coordinateList.get(0),coordinateList.get(1));
-        oneAndThree = compare(coordinateList.get(0),coordinateList.get(0));
-        twoAndThree = compare(coordinateList.get(1), coordinateList.get(2));
+        final int COORD1 = 0;
+        final int COORD2 = 1;
+        final int COORD3 = 2;
+
+        oneAndTwo = compare(coordinateList.get(COORD1),coordinateList.get(COORD2));
+        oneAndThree = compare(coordinateList.get(COORD1),coordinateList.get(COORD3));
+        twoAndThree = compare(coordinateList.get(COORD2), coordinateList.get(COORD3));
 
         if (oneAndTwo || oneAndThree || twoAndThree) {
-            errors.add(NON_VIABLE_COORD, NON_VIABLE_COORD_MSG);
+            errors.add(NON_VIABLE_COORD +": " + NON_VIABLE_COORD_MSG);
         }
 
         return !(oneAndTwo || oneAndThree || twoAndThree);
@@ -33,6 +37,7 @@ public class CoordinateViabilityValidator {
         boolean coordinatesMatch;
         coordinatesMatch = coordA.getColumn() == coordA.getColumn() && coordA.getRow() == coordB.getRow();
         if (coordinatesMatch) {
+            coordA.setValid(false);
             coordB.setValid(false);
         }
         return coordinatesMatch;

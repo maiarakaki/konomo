@@ -19,6 +19,11 @@ public class Shinobi extends Placeable{
         super.setRowIndex(rowIndex);
     }
 
+    @Override
+    public NinjaType getType() {
+        return ninjaType;
+    }
+
     public boolean isAlive() {
         return isAlive;
     }
