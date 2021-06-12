@@ -21,16 +21,16 @@ public class Main {
         //display.titleScreen();
         //String userOption = display.showOptions();
         List<Coordinate> coordinates = new ArrayList<>();
-        coordinates= (display.playerSettings(player1));
+        //coordinates= (display.playerSettings(player1));
 
-/*        { // TODO boletear esto cuando termine las pruebas con las coordenadas
+        { // TODO boletear esto cuando termine las pruebas con las coordenadas
             Coordinate coord1 = new Coordinate(10, 0);
             coordinates.add(coord1);
             Coordinate coord2 = new Coordinate(11, 0);
             Coordinate coord3 = new Coordinate(13, 0);
             coordinates.add(coord2);
             coordinates.add(coord3);
-        }*/
+        }
 
         boolean allGood = gameManager.validate(coordinates, player1);
         if (allGood) {

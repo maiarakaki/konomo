@@ -35,7 +35,7 @@ public class CoordinateViabilityValidator {
 
     private boolean compare(Coordinate coordA, Coordinate coordB) {
         boolean coordinatesMatch;
-        coordinatesMatch = coordA.getColumn() == coordA.getColumn() && coordA.getRow() == coordB.getRow();
+        coordinatesMatch = coordA.getColumn() == coordB.getColumn() && coordA.getRow() == coordB.getRow();
         if (coordinatesMatch) {
             coordA.setValid(false);
             coordB.setValid(false);

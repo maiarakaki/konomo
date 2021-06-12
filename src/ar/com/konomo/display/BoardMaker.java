@@ -9,107 +9,79 @@ public class BoardMaker {
     static int OFFSET = 2;
     static int BOARD_SIZE = 5;
     public static String[] yAxisLabels= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"};
-    static String[][] screenBoard = new String[BOARD_SIZE * BORDER_PADDING + OFFSET][BOARD_SIZE  * BORDER_PADDING+ OFFSET];
 
-
-    public String[][] getBoard (){
+/*    public String[][] getBoard() {
         return screenBoard;
-    }
+    }*/
 
-    public void create(Borders borderSets) {
+    public ScreenBoard create(Borders borderSets) {
+        ScreenBoard screenBoard = new ScreenBoard();
+                //new String[BOARD_SIZE * BORDER_PADDING + OFFSET][BOARD_SIZE  * BORDER_PADDING+ OFFSET];
+
         int k = 0;
-        for (int i = 0; i < screenBoard.length; i++) {
-            for (int j = 0; j < screenBoard[0].length; j++) {
+        for (int i = 0; i < screenBoard.getScreenBoard().length; i++) {
+            for (int j = 0; j < screenBoard.getScreenBoard()[0].length; j++) {
                 if (i == 0 && j >= OFFSET && j % 2 == 0) {
-                    screenBoard[i][j] = yAxisLabels[k];
+                    screenBoard.getScreenBoard()[i][j] = yAxisLabels[k];
                     k++;
                 }
                 if ( j == 0 && i >= OFFSET && i%2 == 0) {
                     int value = i/OFFSET;
                     if (value <10) {
-                        screenBoard[i][j] = " "+ value;
+                        screenBoard.getScreenBoard()[i][j] = " "+ value;
                     } else
-                        screenBoard[i][j] = ""+ value;
+                        screenBoard.getScreenBoard()[i][j] = ""+ value;
                 }
 
                 if (j%2!=0 && i >= OFFSET && i%2 == 0) {
-                    screenBoard[i][j] = borderSets.getBorders(9);
+                    screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(9);
                 }
 
                 if(i%2!=0) {
                     if (j>= OFFSET) {
                         if (j %2==0){
-                        screenBoard[i][j] = borderSets.getBorders(10);
+                            screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(10);
                         }
 
-                        if (j == screenBoard.length-1) {
-                            screenBoard[i][j] = borderSets.getBorders(5);
+                        if (j == screenBoard.getScreenBoard().length-1) {
+                            screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(5);
                         }
                     } if (j == OFFSET -1) {
-                        screenBoard[i][j] = borderSets.getBorders(4);
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(4);
                     }
                 }
                 if ( i == OFFSET-1) {
                     if (j == OFFSET -1) {
-                        screenBoard[i][j] = borderSets.getBorders(0);
-                    } else if (j == screenBoard.length -1) {
-                        screenBoard[i][j] = borderSets.getBorders(2);
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(0);
+                    } else if (j == screenBoard.getScreenBoard().length -1) {
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(2);
                     } else if (j%2!= 0){
-                        screenBoard[i][j] = borderSets.getBorders(6);
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(6);
                     }
                 }
-                if(j%2 != 0 && j > OFFSET -1 && j < screenBoard.length -1) {
-                    if(i >2 && i < screenBoard.length -1 && i%2!=0) {
-                    screenBoard[i][j] = borderSets.getBorders(8);
+                if(j%2 != 0 && j > OFFSET -1 && j < screenBoard.getScreenBoard().length -1) {
+                    if(i >2 && i < screenBoard.getScreenBoard().length -1 && i%2!=0) {
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(8);
                     }
                 }
 
-                if (i == screenBoard.length -1 ) {
+                if (i == screenBoard.getScreenBoard().length -1 ) {
                     if (j == OFFSET -1 ) {
-                        screenBoard[i][j] = borderSets.getBorders(1);
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(1);
                     }
-                    else if (j == screenBoard.length-1) {
-                        screenBoard[i][j] = borderSets.getBorders(3);
+                    else if (j == screenBoard.getScreenBoard().length-1) {
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(3);
                     }
                     else if (j%2!= 0) {
-                        screenBoard[i][j] = borderSets.getBorders(7);
+                        screenBoard.getScreenBoard()[i][j] = borderSets.getBorders(7);
                     }
                 }
 
-                if (screenBoard[i][j] ==null) {
-                    screenBoard[i][j] =" ";}
+                if (screenBoard.getScreenBoard()[i][j] ==null) {
+                    screenBoard.getScreenBoard()[i][j] =" ";}
             }
         }
-    }
-
-    public void print() {
-        for (int i = 0 ; i < screenBoard.length; i++) {
-            for (int j = 0 ; j < screenBoard[i].length; j++) {
-                System.out.print(String.format(" %s ", screenBoard[i][j]) );
-            }
-            System.out.print("\n");
-        }
-    }
-
-    public void update (Board board) {
-        for (int i = 0 ; i < board.getBoard().length; i ++) {
-            for (int j = 0 ; j < board.getBoard().length; j++){
-
-                if (board.getBoard()[i][j] != null) {
-
-                    switch (board.getBoard()[i][j].getType()) {
-                        case CHUUNIN -> screenBoard[i *OFFSET+BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "n";
-                        case JOUNIN -> screenBoard[i *OFFSET+BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "N";
-                        case OBSTACLE -> screenBoard[i *OFFSET+BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "-";
-                        case FIAMBRENIN -> screenBoard[i *OFFSET+BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "x";
-                    }
-
-
-                } else {
-                    screenBoard[i *OFFSET+BORDER_PADDING][j * OFFSET + BORDER_PADDING] = " ";
-                }
-            }
-        }
+        return screenBoard;
     }
 
 

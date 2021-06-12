@@ -20,13 +20,13 @@ public class NinjaPlacing {
     private CoordinateFormalValidator coordinateFormalValidator;
     private CoordinateIn userCoordinate;
     private CoordinateBuilder coordBuilder;
+    private ScreenBoard screenBoard;
 
 
     public NinjaPlacing() {
         background = new Background(5, 5);
         boardMaker = new BoardMaker();
         borders = new DoubleBorders();
-        boardMaker.create(borders);
         coordinateFormalValidator = new CoordinateFormalValidator();
         userCoordinate = new CoordinateIn();
         coordBuilder = new CoordinateBuilder();
@@ -35,12 +35,13 @@ public class NinjaPlacing {
     public List<Coordinate> getCoordenates(String title) {
         background.setTitle(title);
         background.showBackground();
-        board = boardMaker.getBoard();
+        screenBoard = boardMaker.create(borders);
+
         List<Coordinate> coordinates = new ArrayList<>();
 
         int i = 0;
 
-        boardMaker.print();
+        screenBoard.print();
         while (i < NINJAS) {
             if (i == NINJAS - 1) {
                 System.out.println("Ingresa las coordenadas para tu comandante: ");
@@ -67,10 +68,10 @@ public class NinjaPlacing {
     public List<Coordinate> getCoordenates(String title, List<Coordinate> coordinates) {
         background.setTitle(title);
         background.showBackground();
-        board = boardMaker.getBoard();
 
 
-        boardMaker.print();
+
+        screenBoard.print();
 
         for (Coordinate coordinate : coordinates
         ) {

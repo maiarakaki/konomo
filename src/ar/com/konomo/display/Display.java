@@ -4,7 +4,6 @@ import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.OpError;
 import ar.com.konomo.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -60,8 +59,19 @@ public class Display {
     }
 
     public void retrieveBoard(Player player){
-        boardMaker.update(player.getLocalBoard());
-        boardMaker.print();
+        ScreenBoard myBoard = boardMaker.create(new DoubleBorders());
+        ScreenBoard enemyBoard = boardMaker.create(new SimpleBorders());
+        myBoard.update(player.getLocalBoard());
+        enemyBoard.update(player.getEnemyBoard());
+
+        background.setBackground(new String[10 + myBoard.screenBoard.length][myBoard.screenBoard.length + enemyBoard.screenBoard.length +4]);
+        try {
+            background.fillBackground("Juguemos =D", myBoard, enemyBoard, 4, 10);
+            background.showBackground();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 
     private void showErrors(OpError errors){
@@ -70,5 +80,10 @@ public class Display {
             System.out.println(error);
         }
     }
+
+
+
+
+
 
 }
