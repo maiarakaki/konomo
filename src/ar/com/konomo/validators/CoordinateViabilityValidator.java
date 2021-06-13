@@ -11,7 +11,7 @@ public class CoordinateViabilityValidator {
     boolean twoAndThree;
     private OpError errors;
     private static final int NON_VIABLE_COORD = 5;
-    private static final String NON_VIABLE_COORD_MSG = "Una o más coordenadas están repetidas!";
+    private static final String NON_VIABLE_COORD_MSG = "Una o más intenciones están repetidas!";
 
     public CoordinateViabilityValidator (){
         errors = new OpError();
@@ -46,5 +46,4 @@ public class CoordinateViabilityValidator {
     public OpError getErrors(){
         return errors;
     }
-
 }

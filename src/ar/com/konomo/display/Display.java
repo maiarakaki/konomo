@@ -1,11 +1,10 @@
 package ar.com.konomo.display;
 
-import ar.com.konomo.entity.Coordinate;
-import ar.com.konomo.entity.OpError;
-import ar.com.konomo.entity.Player;
+import ar.com.konomo.entity.*;
+import ar.com.konomo.operators.CoordinateBuilder;
+import ar.com.konomo.validators.CoordinateFormalValidator;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Display {
     private TitleScreen titleScreen;
@@ -16,6 +15,10 @@ public class Display {
     private NinjaPlacing ninjaPlacing;
     private Scanner scanner;
     private BoardMaker boardMaker;
+    private CoordinateFormalValidator coordinateFormalValidator;
+    private CoordinateBuilder coordBuilder;
+    private Gameplay gameplay;
+
 
     public void titleScreen(){
         titleScreen.jumpStart();
@@ -56,6 +59,13 @@ public class Display {
         ninjaPlacing = new NinjaPlacing();
         playerCreation = new PlayerCreationDialogue(ninjaPlacing, scanner);
         boardMaker = new BoardMaker();
+        coordinateFormalValidator = new CoordinateFormalValidator();
+        coordBuilder = new CoordinateBuilder();
+        gameplay = new Gameplay(scanner, coordinateFormalValidator, coordBuilder);
+    }
+
+    public Map<Integer, Intention> gamePlay (Player player){
+        return gameplay.getPlayerIntentions(player);
     }
 
     public void retrieveBoard(Player player){
@@ -66,7 +76,7 @@ public class Display {
 
         background.setBackground(new String[10 + myBoard.screenBoard.length][myBoard.screenBoard.length + enemyBoard.screenBoard.length +4]);
         try {
-            background.fillBackground("Juguemos =D", myBoard, enemyBoard, 4, 10);
+            background.fillBackground("Juguemos " + player.getName(), myBoard, enemyBoard, 4, 10);
             background.showBackground();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

@@ -2,12 +2,13 @@ package ar.com.konomo.managers;
 
 import ar.com.konomo.Factories.Factory;
 import ar.com.konomo.entity.*;
+import ar.com.konomo.enums.Action;
 import ar.com.konomo.enums.NinjaType;
-import ar.com.konomo.validators.CoordinatePositionValidator;
-import ar.com.konomo.validators.CoordinateRangeValidator;
-import ar.com.konomo.validators.CoordinateViabilityValidator;
+import ar.com.konomo.validators.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static ar.com.konomo.Main.BOARD_SIZE;
 import static ar.com.konomo.Main.NINJAS;
@@ -21,6 +22,8 @@ public class GM {
     private CoordinateViabilityValidator coordinateViabilityValidator;
     private CoordinatePositionValidator coordinatePositionValidator;
     private OpError errors;
+    private IntentionViabilityValidator intentionViabilityValidator;
+    private MoveValidator moveValidator;
 
     public void createGame(){
         factory= new Factory();
@@ -29,6 +32,8 @@ public class GM {
         coordinateRangeValidator = new CoordinateRangeValidator();
         coordinateViabilityValidator =  new CoordinateViabilityValidator();
         coordinatePositionValidator = new CoordinatePositionValidator();
+        intentionViabilityValidator = new IntentionViabilityValidator();
+        moveValidator = new MoveValidator(coordinatePositionValidator);
         errors = new OpError();
     }
 
@@ -60,6 +65,69 @@ public class GM {
         } else {
             errors.addAll(coordinateRangeValidator.getErrors());
         }
+        return allValid;
+    }
+
+    private List <Coordinate> getIntentionTargets(Map <Integer, Intention> intentions){
+        List <Coordinate> intentionTargets = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionTargets.add(record.getValue().getCoordinate());
+        }
+        return intentionTargets;
+    }
+
+    private List<Intention> getIntentionList(Map <Integer, Intention> intentions){
+        List <Intention> intentionsList = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionsList.add(record.getValue());
+        }
+        return intentionsList;
+    }
+
+    public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
+        boolean allValid = true;
+        boolean commanderIsAlive = player.getMyNinjas().get(2).isAlive();
+        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
+        try {
+            if (coordinateRangeValidator.validate(coordinates)) {
+                List<Intention> intentionList = getIntentionList(playerIntentions);
+                if(intentionViabilityValidator.isViable(intentionList)){
+                    for (Map.Entry<Integer, Intention> record : playerIntentions.entrySet()
+                    ) {
+                        record.getValue().setValid(true);
+                        if (record.getValue().getAction() == Action.MOVE) {
+                            Shinobi ninja = player.getMyNinjas().get(record.getKey());
+                            Coordinate coordinate = record.getValue().getCoordinate();
+                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player.getLocalBoard());
+                            if (!moveIsValid) {
+                                record.getValue().setValid(false);
+
+                                allValid =false;
+                            }
+                        }
+
+                    }
+                    if (!allValid) {
+                        errors.addAll(moveValidator.getError());
+                    }
+
+                } else {
+                    errors.addAll(intentionViabilityValidator.getErrors());
+                    allValid =false;
+                }
+            } else {
+                errors.addAll(coordinateRangeValidator.getErrors());
+                allValid =false;
+            }
+
+
+
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
         return allValid;
     }
 
