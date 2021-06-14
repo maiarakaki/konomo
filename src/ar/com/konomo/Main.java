@@ -7,7 +7,7 @@ import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.operators.EventMessageLog;
 import ar.com.konomo.validators.WinValidator;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 import java.util.*;
 
@@ -124,7 +124,23 @@ public class Main {
         System.out.println("GAME OVERRRRR");
         System.out.println(winValidator.getWinner());
 
+        //al comienzo del turno, reviso el attackLog OJO, AL FINAL DE CADA TURNO DEBE PISARSE CON EL ATAQUE DEL JUGADOR Q ESTA JUGANDO
 
+        //WinValidator winValidator = new WinValidator();
+
+/*
+        while (!winValidator.winConditionsMet(player1, player2)) {
+        List<Intention> opponentAttacks = new ArrayList<>();
+
+
+
+            //setear turno
+            //get player actions
+            //validar
+            //update board
+            //check win
+        }
+*/
 
 
 }

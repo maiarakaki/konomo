@@ -14,10 +14,7 @@ public class Factory {
         playerFactory = new PlayerFactory(ninjaCreator);
     }
 
-    public List<Player> createPlayers(int numberOfNinjas, int boardsize){
-        List<Player> players = new ArrayList<>();
-        players.add(playerFactory.create(numberOfNinjas, boardsize));
-        players.add(playerFactory.create(numberOfNinjas, boardsize));
-        return players;
+    public Player createPlayers(int numberOfNinjas, int boardsize){
+        return playerFactory.create(numberOfNinjas, boardsize);
     }
 }

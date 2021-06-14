@@ -26,17 +26,21 @@ public class PlayerCreationDialogue {
         }
     }
 
-    public List<Coordinate> getPlayerVariables(Player player){
+    public List<Coordinate> getPlayerCoordinates(){
 
         List<Coordinate> coordinates= new ArrayList<>();
         try {
-            coordinates = ninjaPlacing.getCoordenates("Despliega tus ninjas!");
+            coordinates= ninjaPlacing.getCoordenates("Despliega tus ninjas!");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
         return coordinates;
     }
+
+
+
+
 
 }
 

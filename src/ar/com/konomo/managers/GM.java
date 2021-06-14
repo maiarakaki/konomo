@@ -2,12 +2,14 @@ package ar.com.konomo.managers;
 
 import ar.com.konomo.Factories.Factory;
 import ar.com.konomo.entity.*;
+import ar.com.konomo.enums.Action;
 import ar.com.konomo.enums.NinjaType;
-import ar.com.konomo.validators.CoordinatePositionValidator;
-import ar.com.konomo.validators.CoordinateRangeValidator;
-import ar.com.konomo.validators.CoordinateViabilityValidator;
+import ar.com.konomo.operators.AttackLogger;
+import ar.com.konomo.operators.BoardUpdater;
+import ar.com.konomo.operators.EventMessageLog;
+import ar.com.konomo.validators.*;
 
-import java.util.List;
+import java.util.*;
 
 import static ar.com.konomo.Main.BOARD_SIZE;
 import static ar.com.konomo.Main.NINJAS;
@@ -15,29 +17,41 @@ import static ar.com.konomo.Main.NINJAS;
 
 public class GM {
     private Factory factory;
-    private List<Player> players;
+    private Player player1;
+    private Player player2;
     private CoordinateRangeValidator coordinateRangeValidator;
     private CoordinateViabilityValidator coordinateViabilityValidator;
     private CoordinatePositionValidator coordinatePositionValidator;
     private OpError errors;
+    private IntentionViabilityValidator intentionViabilityValidator;
+    private MoveValidator moveValidator;
+    private AttackLogger attackLogger;
+    private EventMessageLog eventMessageLog;
 
     public void createGame(){
         factory= new Factory();
-        players = factory.createPlayers(NINJAS, BOARD_SIZE);
+        player1 = factory.createPlayers(NINJAS, BOARD_SIZE);
+        player2 = factory.createPlayers(NINJAS, BOARD_SIZE);
         coordinateRangeValidator = new CoordinateRangeValidator();
         coordinateViabilityValidator =  new CoordinateViabilityValidator();
         coordinatePositionValidator = new CoordinatePositionValidator();
+        intentionViabilityValidator = new IntentionViabilityValidator();
+        moveValidator = new MoveValidator(coordinatePositionValidator);
+        attackLogger = new AttackLogger();
         errors = new OpError();
+        eventMessageLog = new EventMessageLog();
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public Player getPlayer1() {
+        return player1;
+    }
+    public Player getPlayer2() {
+        return player2;
     }
 
     public boolean validate(List<Coordinate> coordinates, Player player) {
 
         boolean allValid = false;
-        int i = 0;
 
         if (coordinateRangeValidator.validate(coordinates)) {
             setNinjaCoordinates(coordinates, player.getMyNinjas());
@@ -48,14 +62,77 @@ public class GM {
                     setNinjaCoordinates(coordinates, player.getMyNinjas());
                     allValid = true;
                 } else {
-                    errors.add(coordinatePositionValidator.getErrors());
+                    errors.addAll(coordinatePositionValidator.getErrors());
                 }
             } else {
-                errors.add(coordinateViabilityValidator.getErrors());
+                errors.addAll(coordinateViabilityValidator.getErrors());
             }
         } else {
-            errors.add(coordinateRangeValidator.getErrors());
+            errors.addAll(coordinateRangeValidator.getErrors());
         }
+        return allValid;
+    }
+
+    private List <Coordinate> getIntentionTargets(Map <Integer, Intention> intentions){
+        List <Coordinate> intentionTargets = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionTargets.add(record.getValue().getCoordinate());
+        }
+        return intentionTargets;
+    }
+
+    private List<Intention> getIntentionList(Map <Integer, Intention> intentions){
+        List <Intention> intentionsList = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionsList.add(record.getValue());
+        }
+        return intentionsList;
+    }
+
+    public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
+        boolean allValid = true;
+        boolean commanderIsAlive = player.getMyNinjas().get(2).isAlive();
+        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
+        try {
+            if (coordinateRangeValidator.validate(coordinates)) {
+                List<Intention> intentionList = getIntentionList(playerIntentions);
+                if(intentionViabilityValidator.isViable(intentionList)){
+                    for (Map.Entry<Integer, Intention> record : playerIntentions.entrySet()
+                    ) {
+                        record.getValue().setValid(true);
+                        if (record.getValue().getAction() == Action.MOVE) {
+                            Shinobi ninja = player.getMyNinjas().get(record.getKey());
+                            Coordinate coordinate = record.getValue().getCoordinate();
+                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player.getLocalBoard());
+                            if (!moveIsValid) {
+                                record.getValue().setValid(false);
+
+                                allValid =false;
+                            }
+                        }
+
+                    }
+                    if (!allValid) {
+                        errors.addAll(moveValidator.getError());
+                    }
+
+                } else {
+                    errors.addAll(intentionViabilityValidator.getErrors());
+                    allValid =false;
+                }
+            } else {
+                errors.addAll(coordinateRangeValidator.getErrors());
+                allValid =false;
+            }
+
+
+
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
         return allValid;
     }
 
@@ -75,26 +152,75 @@ public class GM {
     }
 
     private void setNinjaCoordinates (List<Coordinate> coords, List<Shinobi> ninjas){
-        int i = 0;
         try {
             for (Coordinate coordinate: coords
-                 ) {
-                if (i == 0) {
-                    ninjas.get(i).setNinjaType(NinjaType.JOUNIN);
+            ) {
+                if (coords.indexOf(coordinate) == NINJAS -1) {
+                    ninjas.get(coords.indexOf(coordinate)).setNinjaType(NinjaType.JOUNIN);
                 } else {
-                    ninjas.get(i).setNinjaType(NinjaType.CHUUNIN);
+                    ninjas.get(coords.indexOf(coordinate)).setNinjaType(NinjaType.CHUUNIN);
                 }
-                ninjas.get(i).setColumnIndex(coordinate.getColumn()-10);
-                ninjas.get(i).setRowIndex(coordinate.getColumn()-10);
-                i++;
+                ninjas.get(coords.indexOf(coordinate)).setColumnIndex(coordinate.getColumn()-10);
+                ninjas.get(coords.indexOf(coordinate)).setRowIndex(coordinate.getRow());
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage() + " en setPleaceableCoords!");
         }
     }
+    
+    public void updateBoards(Player player, Map <Integer, Intention> intentionMap, Board enemyBoard) {
+        BoardUpdater boardUpdater = new BoardUpdater();
+        Board myBoard = player.getLocalBoard();
+        String[][] knownEnemyBoard = player.getEnemyBoard();
+        List <Shinobi> movedNinjas = new ArrayList<>();
 
+        for (Map.Entry<Integer, Intention> record: intentionMap.entrySet()
+             ) {
+            Coordinate coordinate = record.getValue().getCoordinate();
+            Shinobi myNinja = player.getMyNinjas().get(record.getKey());
+            //FIXME TRANSFORMAR LAS COORDENADAS UNA VEZ Q VALIDO QUE ESTÁN EN RANGO PARA QUE SEA MAS FACIL OPERAR CON ELLAS EN TODOS LADOS!
+            switch (record.getValue().getAction()) {
+                case MOVE :
+                    boardUpdater.update(myBoard, record.getValue(), myNinja);
+                    movedNinjas.add(myNinja);
+                    myNinja.setLastActionTaken(Action.MOVE);
+                    break;
+                case ATTACK:
+                    attackLogger.logAttacks(record.getValue());
+                    try {
+                        boardUpdater.update(knownEnemyBoard, enemyBoard, coordinate);
+                        myNinja.setLastActionTaken(Action.ATTACK);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage() + " Fallamos updateando la representacion del board lpm");
+                    }
+                    break;
+            }
+        }
+        place(movedNinjas, myBoard);
+        eventMessageLog = boardUpdater.getEventLog();
+    }
+    
+    public void updateBoards(Player player, Map <Integer, Intention> attackList) {
+        eventMessageLog.getPlayerLog().clear();
+        BoardUpdater boardUpdater = new BoardUpdater();
 
-    //TODO Recibo una lista de coordenadas. Para cada una, valido si están en rango.
-    // Si están, valido que en esa ubicación no haya otra cosa. Si no están, cambio el flag del Coordinate a invalid ¿cómo burbujeo el error?
-    // Si la ubicación está vacía, enchufo al ninja en el board y le seteo sus coordenads.
+        for (Map.Entry<Integer, Intention> record: attackList.entrySet()
+             ) {
+            Coordinate target = record.getValue().getCoordinate();
+            boardUpdater.update(player.getLocalBoard(), target);
+
+        }
+        //termino y vacío el mapa??
+        eventMessageLog = boardUpdater.getEventLog();
+        attackList.clear();
+    }
+    
+    public EventMessageLog getEventLog() {
+        return eventMessageLog;
+    }
+
+    public AttackLogger getAttackLogs(){
+        return attackLogger;
+    }
 }
+

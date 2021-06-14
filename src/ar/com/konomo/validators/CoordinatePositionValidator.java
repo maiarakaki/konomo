@@ -16,7 +16,7 @@ public class CoordinatePositionValidator {
     }
 
     public boolean validate(Board board, Coordinate coordinate) {
-        return board.getBoard()[coordinate.getRow()][coordinate.getColumn()] == null;
+        return board.getBoard()[coordinate.getRow()][coordinate.getColumn() -10] == null;
     }
 
     public boolean validate(Board board, List<Coordinate> coordinates) {
@@ -27,7 +27,7 @@ public class CoordinatePositionValidator {
                 if (!validate(board, coordinate)) {
                     coordinate.setValid(false);
                     success = false;
-                    errors.add(NON_PLACEABLE, NON_PLACEABLE_MSG);
+                    errors.add(NON_PLACEABLE +": " + NON_PLACEABLE_MSG);
                 }
             }
         } catch (Exception ex) {

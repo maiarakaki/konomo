@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NinjaCreator {
-    static int CHUNIN_STAMINA = 10;
-    static int JOUNIN_STAMINA = 20;
+    static int CHUNIN_STAMINA = NinjaType.CHUUNIN.getBaseStamina();
+    static int JOUNIN_STAMINA = NinjaType.JOUNIN.getBaseStamina();
 
     public List<Shinobi> create (int numberOfNinjas){
         List <Shinobi> ninjaList = new ArrayList<>();

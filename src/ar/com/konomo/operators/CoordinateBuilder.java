@@ -13,4 +13,15 @@ public class CoordinateBuilder {
         return this.coordinate;
     }
 
+    public CoordinateIn build(Coordinate coordinate) {
+        CoordinateIn coordinateIn = new CoordinateIn();
+        coordinateIn.setRow(coordinate.getRow()+1);
+
+        int colvalue= coordinate.getColumn() + 55;
+        char alpha = (char) colvalue;
+        coordinateIn.setColumn(alpha);
+
+        return coordinateIn;
+    }
+
 }
