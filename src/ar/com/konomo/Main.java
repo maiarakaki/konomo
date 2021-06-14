@@ -92,16 +92,12 @@ public class Main {
                 gameManager.getEventLog().show();
                 gameOver = winValidator.winConditionsMet(player1, player2);
             }
-            display.retrieveBoard(playerInTurn);
-            playerIntentions = display.gamePlay(playerInTurn);
-            allGood = gameManager.validate(playerIntentions, playerInTurn);
-/*
-            if (allGood) {
-                gameManager.updateBoards(playerInTurn, playerIntentions, adversary.getLocalBoard());
-                gameManager.getEventLog().show();
-                display.retrieveBoard(playerInTurn);
 
-            } else {*/
+            if (!gameOver) {
+                display.retrieveBoard(playerInTurn);
+                playerIntentions = display.gamePlay(playerInTurn);
+                allGood = gameManager.validate(playerIntentions, playerInTurn);
+
                 while (!allGood) {
                     OpError errors = gameManager.getErrors();
                     playerIntentions = display.ammendIntentions(playerIntentions, errors, playerInTurn);
@@ -110,40 +106,25 @@ public class Main {
                 gameManager.updateBoards(playerInTurn, playerIntentions, adversary.getLocalBoard());
                 gameManager.getEventLog().show();
                 display.retrieveBoard(playerInTurn);
-            //}
 
 
-            if (playerInTurn == player1) {
-                playerInTurn = player2;
-                adversary = player1;
-            } else {
-                playerInTurn = player1;
-                adversary = player2;}
-            gameOver = winValidator.winConditionsMet(player1, player2);
+                if (playerInTurn == player1) {
+                    playerInTurn = player2;
+                    adversary = player1;
+                } else {
+                    playerInTurn = player1;
+                    adversary = player2;}
+                gameOver = winValidator.winConditionsMet(player1, player2);
 
-            System.out.println("==============FIN DE TURNO=============");
-        }
+                System.out.println("==============FIN DE TURNO=============");
+                }
+            }
+
 
         System.out.println("GAME OVERRRRR");
         System.out.println(winValidator.getWinner());
 
-        //al comienzo del turno, reviso el attackLog OJO, AL FINAL DE CADA TURNO DEBE PISARSE CON EL ATAQUE DEL JUGADOR Q ESTA JUGANDO
 
-        //WinValidator winValidator = new WinValidator();
-
-/*
-        while (!winValidator.winConditionsMet(player1, player2)) {
-        List<Intention> opponentAttacks = new ArrayList<>();
-
-
-
-            //setear turno
-            //get player actions
-            //validar
-            //update board
-            //check win
-        }
-*/
 
 
 }
