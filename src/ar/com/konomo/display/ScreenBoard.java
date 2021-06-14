@@ -38,7 +38,7 @@ public class ScreenBoard {
                     switch (board.getBoard()[i][j].getType()) {
                         case CHUUNIN -> screenBoard[i * OFFSET + BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "n";
                         case JOUNIN -> screenBoard[i * OFFSET + BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "N";
-                        case OBSTACLE -> screenBoard[i * OFFSET + BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "-";
+                        case OBSTACLE -> screenBoard[i * OFFSET + BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "/";
                         case FIAMBRENIN -> screenBoard[i * OFFSET + BORDER_PADDING][j * OFFSET + BORDER_PADDING] = "x";
                     }
 

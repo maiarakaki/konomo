@@ -69,8 +69,6 @@ public class NinjaPlacing {
         background.setTitle(title);
         background.showBackground();
 
-
-
         screenBoard.print();
 
         for (Coordinate coordinate : coordinates

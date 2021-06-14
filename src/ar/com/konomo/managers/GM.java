@@ -4,11 +4,12 @@ import ar.com.konomo.Factories.Factory;
 import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.Action;
 import ar.com.konomo.enums.NinjaType;
+import ar.com.konomo.operators.AttackLogger;
+import ar.com.konomo.operators.BoardUpdater;
+import ar.com.konomo.operators.EventMessageLog;
 import ar.com.konomo.validators.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ar.com.konomo.Main.BOARD_SIZE;
 import static ar.com.konomo.Main.NINJAS;
@@ -24,6 +25,8 @@ public class GM {
     private OpError errors;
     private IntentionViabilityValidator intentionViabilityValidator;
     private MoveValidator moveValidator;
+    private AttackLogger attackLogger;
+    private EventMessageLog eventMessageLog;
 
     public void createGame(){
         factory= new Factory();
@@ -34,7 +37,9 @@ public class GM {
         coordinatePositionValidator = new CoordinatePositionValidator();
         intentionViabilityValidator = new IntentionViabilityValidator();
         moveValidator = new MoveValidator(coordinatePositionValidator);
+        attackLogger = new AttackLogger();
         errors = new OpError();
+        eventMessageLog = new EventMessageLog();
     }
 
     public Player getPlayer1() {
@@ -162,4 +167,60 @@ public class GM {
             System.out.println(ex.getMessage() + " en setPleaceableCoords!");
         }
     }
+    
+    public void updateBoards(Player player, Map <Integer, Intention> intentionMap, Board enemyBoard) {
+        BoardUpdater boardUpdater = new BoardUpdater();
+        Board myBoard = player.getLocalBoard();
+        String[][] knownEnemyBoard = player.getEnemyBoard();
+        List <Shinobi> movedNinjas = new ArrayList<>();
+
+        for (Map.Entry<Integer, Intention> record: intentionMap.entrySet()
+             ) {
+            Coordinate coordinate = record.getValue().getCoordinate();
+            Shinobi myNinja = player.getMyNinjas().get(record.getKey());
+            //FIXME TRANSFORMAR LAS COORDENADAS UNA VEZ Q VALIDO QUE ESTÁN EN RANGO PARA QUE SEA MAS FACIL OPERAR CON ELLAS EN TODOS LADOS!
+            switch (record.getValue().getAction()) {
+                case MOVE :
+                    boardUpdater.update(myBoard, record.getValue(), myNinja);
+                    movedNinjas.add(myNinja);
+                    myNinja.setLastActionTaken(Action.MOVE);
+                    break;
+                case ATTACK:
+                    attackLogger.logAttacks(record.getValue());
+                    try {
+                        boardUpdater.update(knownEnemyBoard, enemyBoard, coordinate);
+                        myNinja.setLastActionTaken(Action.ATTACK);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage() + " Fallamos updateando la representacion del board lpm");
+                    }
+                    break;
+            }
+        }
+        place(movedNinjas, myBoard);
+        eventMessageLog = boardUpdater.getEventLog();
+    }
+    
+    public void updateBoards(Player player, Map <Integer, Intention> attackList) {
+        eventMessageLog.getPlayerLog().clear();
+        BoardUpdater boardUpdater = new BoardUpdater();
+
+        for (Map.Entry<Integer, Intention> record: attackList.entrySet()
+             ) {
+            Coordinate target = record.getValue().getCoordinate();
+            boardUpdater.update(player.getLocalBoard(), target);
+
+        }
+        //termino y vacío el mapa??
+        eventMessageLog = boardUpdater.getEventLog();
+        attackList.clear();
+    }
+    
+    public EventMessageLog getEventLog() {
+        return eventMessageLog;
+    }
+
+    public AttackLogger getAttackLogs(){
+        return attackLogger;
+    }
 }
+

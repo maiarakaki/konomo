@@ -68,6 +68,12 @@ public class Display {
         return gameplay.getPlayerIntentions(player);
     }
 
+    public Map<Integer, Intention> ammendIntentions(Map<Integer, Intention> intentions, OpError errors, Player player) {
+        showErrors(errors);
+        retrieveBoard(player);
+        return gameplay.getPlayerIntentions("Intentémoslo de nuevo", intentions, player.getMyNinjas());
+    }
+
     public void retrieveBoard(Player player){
         ScreenBoard myBoard = boardMaker.create(new DoubleBorders());
         ScreenBoard enemyBoard = boardMaker.create(new SimpleBorders());

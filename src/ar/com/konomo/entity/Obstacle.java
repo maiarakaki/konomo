@@ -11,4 +11,9 @@ public class Obstacle extends Placeable{
     public NinjaType getType() {
         return ninjaType;
     }
+
+    @Override
+    public int getStamina() {
+        return 0;
+    }
 }

@@ -23,4 +23,6 @@ public abstract class Placeable {
     }
 
     public abstract NinjaType getType ();
+
+    public abstract int getStamina();
 }
