@@ -4,24 +4,31 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
+import ar.com.konomo.managers.GM;
+import ar.com.konomo.server.handlers.CoordinateValidationHandler;
+import ar.com.konomo.server.handlers.HandshakeHandler;
+import ar.com.konomo.server.handlers.ReadyHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class Server {
-    private MessageHandler myHandler = new MessageHandler();
+    private HandshakeHandler handshakeHandler = new HandshakeHandler();
     private HttpServer server;
+    private GM manager;
 
-    public Server() {
-
+    public Server(GM manager) {
+        this.manager = manager;
         try {
             /**
              * cambiar el ip al ip que me da hamachi en el primer argumento de InetSocketAdress
              * sino, poner acá la ipv4 de ipconfig
              */
             server = HttpServer.create(new InetSocketAddress(8000), 0);
-            server.createContext("/connect", new MessageHandler());
-            server.createContext("/myninja", new MessageHandler());
+            server.createContext("/connect", new HandshakeHandler());
+            server.createContext("/ready", new ReadyHandler());
+            server.createContext("/validate", new CoordinateValidationHandler(manager));
+
 
             server.setExecutor(null); // creates a default executor
             server.start();
@@ -31,5 +38,8 @@ public class Server {
     }
 
 
-}
 
+    public void stop() {
+        server.stop(0);
+    }
+}

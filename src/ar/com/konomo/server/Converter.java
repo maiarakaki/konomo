@@ -2,27 +2,26 @@ package ar.com.konomo.server;
 
 import ar.com.konomo.entity.Player;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 
 public class Converter {
-        static Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        public Converter(Gson gson) {
-            this.gson = gson;
-        }
-/*
-        public static String toJson(Message message){
-            return gson.toJson(message);
-        }
 
-        public static Message jsonToMessage(String json){
-            return gson.fromJson(json,Message.class);
-        }*/
-
-        public static String toJson(Player player){
-            return gson.toJson(player);
-        }
-
-        public static Player jsonToPlayer(String json){
-            return gson.fromJson(json,Player.class);
-        }
+    public static String toJson(Object object) {
+        return gson.toJson(object);
     }
+
+    public static <T> T fromJson(String json, Type type) {
+        return gson.fromJson(json, type);
+    }
+
+    public static <T> T fromJson(InputStream in, Type type) {
+        return gson.fromJson(new InputStreamReader(in), type);
+    }
+
+}
