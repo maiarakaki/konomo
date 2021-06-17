@@ -7,6 +7,7 @@ import ar.com.konomo.entity.Player;
 import java.util.List;
 
 public class PlayerCoords {
+    boolean allGood;
     private Player player;
     private List<Coordinate> coords;
     private OpError errors;
@@ -33,5 +34,13 @@ public class PlayerCoords {
 
     public void setErrors(OpError errors) {
         this.errors = errors;
+    }
+
+    public boolean isAllGood() {
+        return allGood;
+    }
+
+    public void setAllGood(boolean allGood) {
+        this.allGood = allGood;
     }
 }

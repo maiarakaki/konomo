@@ -67,15 +67,30 @@ public class Delivery {
             response = new Message(responseCode, "", responseBody);// TODO
             httpResponse.disconnect();
         } catch (HttpResponseException e) {
-            System.out.println(e.getMessage());
-/*            MyError error = Converter.fromJson(e.getContent(), Error.class);
-            try {
-                response = new Message (error.getStatusCode(), error.getMessage(), error);
+//            System.out.println(e.getMessage());
 
-            }catch (Exception e2) {
-                System.out.println(e2.getMessage() + "Maite tenía razón!!!");
-            }
-            System.out.println("sarasasasasa");*/
+        } catch (IOException e) {
+            System.out.println("Connection refused");
+        }
+
+        return response;
+    }
+
+
+    public static PlayerCoords doPost(String endpoint, PlayerCoords body) {
+        HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+        PlayerCoords response = null;
+        try {
+            HttpContent content = ByteArrayContent.fromString(null, Converter.toJson(body));
+            HttpRequest httpRequest = requestFactory.buildPostRequest(new GenericUrl(endpoint), content);
+            httpRequest.getHeaders().setContentType("application/json");
+            HttpResponse httpResponse = httpRequest.execute();
+            int responseCode = httpResponse.getStatusCode();
+            response = Converter.fromJson(httpResponse.parseAsString(), PlayerCoords.class);
+            httpResponse.disconnect();
+        } catch (HttpResponseException e) {
+//            System.out.println(e.getMessage());
+
         } catch (IOException e) {
             System.out.println("Connection refused");
         }

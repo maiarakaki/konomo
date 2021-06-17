@@ -38,7 +38,7 @@ public class Game {
         gameManager.createGame();
         player1 = gameManager.getPlayer1();
         player2 = gameManager.getPlayer2();
-        initializer = new Initializer(display);
+        initializer = new Initializer(display, gameManager);
     }
 
 
@@ -47,7 +47,7 @@ public class Game {
 
 
     public void start(){
-
+        gameManager.createGame();
         initializer.initiate();
         player1 = initializer.getPlayer(GameMode.HOST);
         player2 = initializer.getPlayer(GameMode.GUEST);

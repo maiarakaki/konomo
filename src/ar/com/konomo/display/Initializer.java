@@ -15,6 +15,7 @@ import ar.com.konomo.server.handlers.HandshakeHandler;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import static ar.com.konomo.Main.BOARD_SIZE;
 import static ar.com.konomo.Main.NINJAS;
@@ -28,6 +29,7 @@ public class Initializer {
     private Player player1;
     private Player player;
     private Player player2;
+    private GM gameManager;
 
     private static volatile boolean isReady;
 
@@ -35,8 +37,9 @@ public class Initializer {
         isReady = ready;
     }
 
-    public Initializer(Display display) {
+    public Initializer(Display display, GM manager) {
         this.display = display;
+        this.gameManager = manager;
         NinjaCreator ninjaCreator = new NinjaCreator();
         PlayerFactory playerFactory = new PlayerFactory(ninjaCreator);
         scan = new Scanner(System.in);
@@ -52,6 +55,10 @@ public class Initializer {
         String userOption = display.showOptions().toUpperCase();
         String input;
         Message message = null;
+
+        player2 = initializeClient();
+
+
         switch (userOption) {
             case "N": {
                 gameMode = GameMode.HOST;
@@ -83,6 +90,7 @@ public class Initializer {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        ip = HandshakeHandler.getIp();
                     }
                 }
 
@@ -97,8 +105,8 @@ public class Initializer {
                 System.out.println(input);
 
                 if (Integer.parseInt(input) == 1) {
-
-
+                    //  attemptConnection();
+                    message = null;
                     while (message == null || message.getCode() != 200) {
                         ip = display.serverCreation("Datos de conexión");
                         requester.setIp(ip);
@@ -108,15 +116,26 @@ public class Initializer {
                             System.out.println("Falló la conexión!");
                         }
                         // ver que hago si no me puedo conectar (???)
+                        System.out.println("Esperando conexión");
+
+                    }
+
+                } else {
+
+                    System.out.println("Esperando conexión");
+
+                    while (!HandshakeHandler.isConnected()) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-                System.out.println("Esperando conexión");
 
-                while (message == null || message.getCode() != 200) {
-
-                }
-                System.out.println(message.getMessage());
                 System.out.println("Conexión establecida! Juguemosss! =D");
+
+
                 player2 = initializeClient();
                 System.out.println("Le pido datos al cliente....");
             }
@@ -167,7 +186,7 @@ public class Initializer {
                 break;
             case GUEST:
                 System.out.println("1. Conectarme a una partida");
-                System.out.println("2. Esperar a que se conecte alguien");
+                System.out.println("2. Esperar invitación");
 
                 input = scan.nextLine();
 
@@ -190,7 +209,7 @@ public class Initializer {
     }
 
     public Player initializePlayer() {
-        GM gameManager = new GM();
+
         List<Coordinate> coordinates = (display.playerSettings(player));
         boolean allGood = gameManager.validate(coordinates, player);
         if (allGood) {
@@ -219,21 +238,80 @@ public class Initializer {
     }
 
     private Player initializeClient(){
+/*        Message message;
         PlayerCoords playerCoords= new PlayerCoords();
         OpError errors;
+        playerCoords.setAllGood(false);
         List<Coordinate> coordinates= (display.playerSettings(player));
         playerCoords.setCoords(coordinates);
+        playerCoords.setPlayer(player);
         Requester requester = new Requester();
-        requester.setIp(HandshakeHandler.getIp()+":"+8000);
-        Message message = requester.sendPost(playerCoords, "/validate");
 
-        while (message.getCode() != 200) {
-            playerCoords = Converter.fromJson(message.getMessage(),PlayerCoords.class);
-            errors = playerCoords.getErrors();
-            coordinates = display.ammendCoordinates(playerCoords.getCoords(), errors);
+       //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
+        requester.setIp("127.0.0.1:8001");
 
-            message = requester.sendPost(coordinates, "/validate");
+        try {
+           Message messageBody;
+            message = requester.sendPost(playerCoords, "/validate");
+
+            messageBody = (Message )message.getBody();
+           if (message == null) {
+               System.out.println("Conexión rechazada!");
+               return null;
+           }
+
+            while (messageBody.getCode() == 999 ) {
+                playerCoords = (PlayerCoords) messageBody.getBody();
+                errors = playerCoords.getErrors();
+                coordinates = display.ammendCoordinates(playerCoords.getCoords(), errors);
+
+                message = requester.sendPost(coordinates, "/validate");
+                messageBody = (Message )message.getBody();
+            }
+           // System.out.println(message.getMessage());
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }*/
+
+        PlayerCoords playerCoords= new PlayerCoords();
+        OpError errors;
+        playerCoords.setAllGood(false);
+        List<Coordinate> coordinates= (display.playerSettings(player));
+        playerCoords.setCoords(coordinates);
+        playerCoords.setPlayer(player);
+        Requester requester = new Requester();
+
+        //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
+        requester.setIp("127.0.0.1:8001");
+
+        try {
+            playerCoords = requester.sendPost(playerCoords, "/validate");
+
+            if (playerCoords == null) {
+                System.out.println("Conexión rechazada!");
+                return null;
+            }
+
+            while (!playerCoords.isAllGood() ) {
+                //playerCoords = (PlayerCoords) messageBody.getBody();
+                errors = playerCoords.getErrors();
+                coordinates = display.ammendCoordinates(playerCoords.getCoords(), errors);
+                playerCoords.setCoords(coordinates);
+                playerCoords.setPlayer(player);
+                errors = new OpError();
+                playerCoords.setErrors(errors);
+
+
+                playerCoords = requester.sendPost(playerCoords, "/validate");
+
+            }
+            // System.out.println(message.getMessage());
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+
 
         return playerCoords.getPlayer();
     }

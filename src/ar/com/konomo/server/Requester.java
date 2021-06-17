@@ -9,6 +9,10 @@ public class Requester {
         return Delivery.doPost(host + endpoint, object, Message.class);
     }
 
+    public PlayerCoords sendPost(PlayerCoords object, String endpoint) {
+        return Delivery.doPost(host + endpoint, object);
+    }
+
     public Message sendGet(String endpoint, Type type) {
         return Delivery.doGet(host + endpoint, type);
     }
