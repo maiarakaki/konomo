@@ -1,55 +1,35 @@
 package ar.com.konomo.server;
 
-import com.sun.net.httpserver.HttpServer;
-import java.net.InetAddress;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 public class Server {
-    MessageHandler messageHandler = new MessageHandler();
-    HttpServer server;
-    private String ip;
-    private String playerName;
-    private int port=8000;
+    private MessageHandler myHandler = new MessageHandler();
+    private HttpServer server;
 
-    public void start() throws Exception {
-        server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", messageHandler);
-        server.setExecutor(null);
-        server.start();
+    public Server() {
 
         try {
-            ip = InetAddress.getLocalHost().getHostAddress();;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            /**
+             * cambiar el ip al ip que me da hamachi en el primer argumento de InetSocketAdress
+             * sino, poner acá la ipv4 de ipconfig
+             */
+            server = HttpServer.create(new InetSocketAddress(8000), 0);
+            server.createContext("/connect", new MessageHandler());
+            server.createContext("/myninja", new MessageHandler());
+
+            server.setExecutor(null); // creates a default executor
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-    public void sendMessage(String message){
-        messageHandler.setMessage(message);
-    }
 
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void stop(){
-        server.stop(0);
-    }
 
 }
+

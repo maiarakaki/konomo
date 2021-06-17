@@ -3,6 +3,7 @@ package ar.com.konomo.server.logic;
 import ar.com.konomo.display.Display;
 import ar.com.konomo.entity.*;
 import ar.com.konomo.managers.GM;
+import ar.com.konomo.server.Client;
 import ar.com.konomo.server.Server;
 import ar.com.konomo.validators.WinValidator;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 public class Game {
 
     private Server server;
+    private Client client;
     private GM gameManager;
     private Display display;
     private Player player1;
@@ -29,28 +31,56 @@ public class Game {
         display = new Display();
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
+        gameManager.createGame();
+        player1 = gameManager.getPlayer1();
+        player2 = gameManager.getPlayer2();
+    }
+
+
+    private void init(){
+        display.titleScreen();
+        String userOption = display.showOptions().toUpperCase();
+
+        switch (userOption) {
+            case "N":
+                display.serverCreation("Datos de conexión");
+                playerInTurn = initializePlayer(player1);
+                break;
+            case "C" :
+                /**
+                 * 1. conectarse
+                 * 2. si se pudo conectar, setear el player (necesito que el cliente me devuelva un Player al server)
+                 */
+                display.serverCreation("Datos de conexión");
+                adversary = initializePlayer(player2); //<--
+
+
+                break;
+            case "X":
+                quit();
+        }
+        adversary = initializePlayer(player2); //<--
+
 
     }
 
     public void start(){
-        gameManager.createGame();
-        player1 = gameManager.getPlayer1();
+
+        init();
+
+/*        player1 = gameManager.getPlayer1();
         player2 = gameManager.getPlayer2();
-        try {
-            server.start();
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage() + " failed to start Server");
-        }
+        playerInTurn = gameManager.getPlayer1();
+        adversary = getPlayer(player2);*/
 
-        display.titleScreen();
-        //String userOption = display.showOptions();
+        play();
 
-        playerInTurn = getPlayer(player1);
-        adversary = getPlayer(player2);
+
+
     }
 
 
-    private Player getPlayer(Player player){
+    private Player initializePlayer(Player player){
         coordinates= (display.playerSettings(player));
         boolean allGood = gameManager.validate(coordinates, player);
         if (allGood) {
@@ -59,6 +89,25 @@ public class Game {
             while (!allGood) {
                 OpError errors = gameManager.getErrors();
                 coordinates = display.ammendCoordinates(coordinates, errors);
+                //
+                allGood = gameManager.validate(coordinates, player);
+            }
+        }
+        return player;
+    }
+
+
+    private Player initializeClient(Player player){
+        coordinates= (display.playerSettings(player));
+        //si es cliente mandarle las coord al server para que el manager valide
+        boolean allGood = gameManager.validate(coordinates, player);
+        if (allGood) {
+            display.retrieveBoard(player);
+        } else {
+            while (!allGood) {
+                OpError errors = gameManager.getErrors();
+                coordinates = display.ammendCoordinates(coordinates, errors);
+                //
                 allGood = gameManager.validate(coordinates, player);
             }
         }
@@ -70,7 +119,6 @@ public class Game {
         boolean allGood;
 
         while (!gameOver) {
-            //al inicio del turno me recibo los ataques de mi oponente...
             Map<Integer, Intention> playerIntentions = new HashMap<>();
 
 
@@ -112,6 +160,10 @@ public class Game {
         System.out.println("Ganador: " + winValidator.getWinner());
     }
 
+    public void quit(){
+        System.out.println("Cya!");
+      //  server.stop();
+    }
 
 
 
