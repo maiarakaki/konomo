@@ -5,6 +5,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -86,7 +87,7 @@ public class Delivery {
             httpRequest.getHeaders().setContentType("application/json");
             HttpResponse httpResponse = httpRequest.execute();
             int responseCode = httpResponse.getStatusCode();
-            response = Converter.fromJson(httpResponse.parseAsString(), PlayerCoords.class);
+            response = Converter.fromJson(httpResponse.getContent(), PlayerCoords.class);
             httpResponse.disconnect();
         } catch (HttpResponseException e) {
 //            System.out.println(e.getMessage());

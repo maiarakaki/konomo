@@ -8,8 +8,6 @@ import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.handlers.CoordinateValidationHandler;
 import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class Server {
