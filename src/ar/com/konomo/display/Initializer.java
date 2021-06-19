@@ -57,7 +57,9 @@ public class Initializer {
         Message message = null;
 
         player2 = initializeClient();
+        System.out.println("player 2 ready... apparently...");
 
+        display.retrieveBoard(player2);
 
         switch (userOption) {
             case "N": {
@@ -238,48 +240,13 @@ public class Initializer {
     }
 
     private Player initializeClient(){
-/*        Message message;
-        PlayerCoords playerCoords= new PlayerCoords();
-        OpError errors;
-        playerCoords.setAllGood(false);
-        List<Coordinate> coordinates= (display.playerSettings(player));
-        playerCoords.setCoords(coordinates);
-        playerCoords.setPlayer(player);
-        Requester requester = new Requester();
-
-       //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
-        requester.setIp("127.0.0.1:8001");
-
-        try {
-           Message messageBody;
-            message = requester.sendPost(playerCoords, "/validate");
-
-            messageBody = (Message )message.getBody();
-           if (message == null) {
-               System.out.println("Conexión rechazada!");
-               return null;
-           }
-
-            while (messageBody.getCode() == 999 ) {
-                playerCoords = (PlayerCoords) messageBody.getBody();
-                errors = playerCoords.getErrors();
-                coordinates = display.ammendCoordinates(playerCoords.getCoords(), errors);
-
-                message = requester.sendPost(coordinates, "/validate");
-                messageBody = (Message )message.getBody();
-            }
-           // System.out.println(message.getMessage());
-
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }*/
 
         PlayerCoords playerCoords= new PlayerCoords();
         OpError errors;
         playerCoords.setAllGood(false);
         List<Coordinate> coordinates= (display.playerSettings(player));
+        playerCoords.setNinjaList(player.getMyNinjas());
         playerCoords.setCoords(coordinates);
-        playerCoords.setPlayer(player);
         Requester requester = new Requester();
 
         //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
@@ -294,11 +261,9 @@ public class Initializer {
             }
 
             while (!playerCoords.isAllGood() ) {
-                //playerCoords = (PlayerCoords) messageBody.getBody();
                 errors = playerCoords.getErrors();
                 coordinates = display.ammendCoordinates(playerCoords.getCoords(), errors);
                 playerCoords.setCoords(coordinates);
-                playerCoords.setPlayer(player);
                 errors = new OpError();
                 playerCoords.setErrors(errors);
 
@@ -306,13 +271,19 @@ public class Initializer {
                 playerCoords = requester.sendPost(playerCoords, "/validate");
 
             }
-            // System.out.println(message.getMessage());
+
 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
+      try {
+          gameManager.place(playerCoords.getNinjaList(), player.getLocalBoard());
+          player.setMyNinjas(playerCoords.getNinjaList());
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
 
-        return playerCoords.getPlayer();
+        return player;
     }
 }

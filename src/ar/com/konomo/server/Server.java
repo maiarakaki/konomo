@@ -1,7 +1,6 @@
 package ar.com.konomo.server;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 import ar.com.konomo.managers.GM;
@@ -26,6 +25,7 @@ public class Server {
             server.createContext("/connect", new HandshakeHandler());
             server.createContext("/ready", new ReadyHandler());
             server.createContext("/validate", new CoordinateValidationHandler(manager));
+          //  server.createContext("/player", new PlayerHandler());
 
 
             server.setExecutor(null); // creates a default executor

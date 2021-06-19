@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 public class Requester {
     private static String host;
 
-    public Message sendPost(Object object, String endpoint) {
+    public Message sendPost(Object object, String endpoint, Type type) {
         return Delivery.doPost(host + endpoint, object, Message.class);
     }
 

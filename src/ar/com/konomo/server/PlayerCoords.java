@@ -3,22 +3,24 @@ package ar.com.konomo.server;
 import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.OpError;
 import ar.com.konomo.entity.Player;
+import ar.com.konomo.entity.Shinobi;
 
 import java.util.List;
 
 public class PlayerCoords {
     boolean allGood;
-    private Player player;
     private List<Coordinate> coords;
     private OpError errors;
+    private List <Shinobi> ninjaList;
 
-    public Player getPlayer() {
-        return player;
+    public List<Shinobi> getNinjaList() {
+        return ninjaList;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    public void setNinjaList(List<Shinobi> ninjaList) {
+        this.ninjaList = ninjaList;
     }
+
 
     public List<Coordinate> getCoords() {
         return coords;

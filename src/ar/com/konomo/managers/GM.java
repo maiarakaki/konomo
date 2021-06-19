@@ -222,5 +222,24 @@ public class GM {
     public AttackLogger getAttackLogs(){
         return attackLogger;
     }
+
+    public boolean validate(List<Coordinate> coordinates, List <Shinobi>ninjaList) {
+
+        boolean allValid = false;
+
+        if (coordinateRangeValidator.validate(coordinates)) {
+            setNinjaCoordinates(coordinates, ninjaList);
+            if (coordinateViabilityValidator.isViable(coordinates)) {
+                setNinjaCoordinates(coordinates, ninjaList);
+                place(ninjaList, player2.getLocalBoard());
+                allValid = true;
+            } else {
+                errors.addAll(coordinateViabilityValidator.getErrors());
+            }
+        } else {
+            errors.addAll(coordinateRangeValidator.getErrors());
+        }
+        return allValid;
+    }
 }
 

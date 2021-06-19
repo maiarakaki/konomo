@@ -3,6 +3,7 @@ package ar.com.konomo.server.handlers;
 import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.OpError;
 import ar.com.konomo.entity.Player;
+import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.Converter;
 import ar.com.konomo.server.PlayerCoords;
@@ -19,35 +20,18 @@ public class CoordinateValidationHandler implements HttpHandler {
     private final int NOPE = 999;
     private GM manager;
 
+
     @Override
     public void handle(HttpExchange t) throws IOException {
-/*        PlayerCoords playerCoords =Converter.fromJson(t.getRequestBody(), PlayerCoords.class);
-        Player player = playerCoords.getPlayer();
-        List<Coordinate> coordinateList = playerCoords.getCoords();
-        OpError errors = playerCoords.getErrors();
-
-        boolean allGood = manager.validate(coordinateList, player);
-        errors = manager.getErrors();
-        playerCoords.setErrors(errors);
-
-
-        if(allGood) {
-            Message message = new Message(OK, "", playerCoords);
-            String json = Converter.toJson(message);
-            sendResponse(OK, json, t);
-        } else {
-            Message message = new Message(NOPE, "Hay erroresss kfdñjdfg", playerCoords);
-            String json = Converter.toJson(message);
-            sendResponse(OK, json, t);
-        }*/
 
         PlayerCoords playerCoords = Converter.fromJson(t.getRequestBody(), PlayerCoords.class);
-        Player player = playerCoords.getPlayer();
         List<Coordinate> coordinateList = playerCoords.getCoords();
         OpError errors = playerCoords.getErrors();
+        List <Shinobi> ninjaList = playerCoords.getNinjaList();
 
-        boolean allGood = manager.validate(coordinateList, player);
+        boolean allGood = manager.validate(coordinateList, ninjaList);
         errors = manager.getErrors();
+        playerCoords.setNinjaList(ninjaList);
         playerCoords.setErrors(errors);
         playerCoords.setAllGood(allGood);
 
@@ -66,15 +50,6 @@ public class CoordinateValidationHandler implements HttpHandler {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-/*        try {
-            exchange.sendResponseHeaders(statusCode, response.length());
-            OutputStream outStream = exchange.getResponseBody();
-            outStream.write(response.getBytes(StandardCharsets.UTF_8));
-            outStream.flush();
-            outStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
     }
 
