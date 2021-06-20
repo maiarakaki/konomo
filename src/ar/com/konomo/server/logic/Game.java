@@ -32,8 +32,9 @@ public class Game {
     private Player adversary;
     public static GameMode mode;
     private Initializer initializer;
+    private Requester requester;
 
-    private static volatile GameState gameState = GameState.ON;
+    public static volatile GameState gameState = GameState.ON;
 
 
     public Game (){
@@ -41,6 +42,7 @@ public class Game {
         display = new Display();
         initializer = new Initializer(display, gameManager);
         server = new Server(gameManager, initializer);
+        requester = new Requester();
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
@@ -53,6 +55,7 @@ public class Game {
     public void start(){
         gameManager.createGame();
         initializer.initiate();
+        requester.setIp("127.0.0.1:8001");
         player1 = initializer.getPlayer(GameMode.HOST);
         player2 = initializer.getPlayer(GameMode.GUEST);
         mode = initializer.getGameMode();
@@ -82,17 +85,6 @@ public class Game {
                 * debería ser capaz de analizarlo localmente
                 */
             attackLogger = gameManager.getAttackLogs();
-/*            } else {
-                //espero a que el cliente me avise que está ready para ir a buscar sus intenciones
-                while (!ReadyHandler.isReady()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                //attackLogger =
-            }*/
 
 
              if (!attackLogger.getAttackLog().isEmpty()) {
@@ -120,38 +112,53 @@ public class Game {
                 display.retrieveBoard(playerInTurn);
 
 
-                if (playerInTurn == player1) {
-                    playerInTurn = player2;
-                    adversary = player1;
-                } else {
-                    playerInTurn = player1;
-                    adversary = player2;}
 
                 gameOver = winValidator.winConditionsMet(player1, player2);
 
                 System.out.println("==============FIN DE TURNO=============");
+
+                while (!ReadyHandler.isReady()) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         } else {
                playerInTurn = player2;
 
-               Requester requester = new Requester();
+
                Message message;
-               //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
-               requester.setIp("127.0.0.1:8001");
-           //    Message message =  requester.sendGet("/hitMe", Message.class);
-             //  attackLogger = (AttackLogger) message.getBody();
-                attackLogger = requester.sendGet("/hitMe", attackLogger);
+
+               attackLogger = requester.sendGet("/hitMe", attackLogger);
+               message = requester.sendGet("/events", String.class);
 
                if (!attackLogger.getAttackLog().isEmpty()) {
                    gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
-                   message = requester.sendGet("/events", String.class);
                    EventMessageLog eventLog = Converter.fromJson(message.getMessage(), EventMessageLog.class);
                    eventLog.show();
+                   //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
 
-                   //gameManager.getEventLog().show(); //<-- este tambien necesita un get
-                  // gameOver = winValidator.winConditionsMet(player1, player2);
+                   if (winValidator.allNinjasKilled(playerInTurn)) {
+                       requester.setIp("127.0.0.1:8001");
+                       String json = Converter.toJson(playerInTurn.getMyNinjas());
+                       requester.sendPost(json, "/gameState"); //<-- mando mis ninjas para que los actualice
+                   }
                }
+               display.retrieveBoard(playerInTurn);
+               playerIntentions = getClientIntentions();
 
+
+               requester.sendGet("/ready", Message.class);
+
+               while (!ReadyHandler.isReady()) {
+                   try {
+                       Thread.sleep(500);
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+               }
            }
         }
 
@@ -165,6 +172,41 @@ public class Game {
        // server.stop();
     }
 
+private Map<Integer, Intention>  getClientIntentions(){
+    Map<Integer, Intention>  playerIntentions = display.gamePlay(playerInTurn);
+    OpError errors;
 
+
+    //  requester.setIp("127.0.0.1:8001");
+
+    try {
+        IntentionPack intentionPack = new IntentionPack(playerIntentions, playerInTurn.getMyNinjas(), playerInTurn.getLocalBoard(),false);
+       // String json = Converter.toJson(intentionPack);
+        intentionPack = requester.sendPost(intentionPack, "/intentions");
+
+        if (playerIntentions == null) {
+            System.out.println("Conexión rechazada!");
+            return null;
+        }
+
+        while (!intentionPack.allGood ) {
+            errors = intentionPack.getErrors();
+            playerIntentions = display.ammendIntentions(playerIntentions, errors, playerInTurn);
+            intentionPack.setIntentions(playerIntentions);
+            errors = new OpError();
+            intentionPack.setErrors(errors);
+
+
+            intentionPack = requester.sendPost(intentionPack, "/intentions");
+
+        }
+        playerIntentions = intentionPack.getIntentions();
+
+
+    } catch (Exception ex) {
+        System.out.println(ex.getMessage());
+    }
+    return playerIntentions;
+}
 
 }

@@ -25,7 +25,7 @@ public class WinValidator {
         return  p1Lost || p2Lost;
     }
 
-    private boolean allNinjasKilled (Player player) {
+    public boolean allNinjasKilled (Player player) {
         boolean allDead = true;
         List<Shinobi> playerTroops = player.getMyNinjas();
 

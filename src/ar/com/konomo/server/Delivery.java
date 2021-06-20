@@ -1,5 +1,7 @@
 package ar.com.konomo.server;
 
+import ar.com.konomo.entity.Intention;
+import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.operators.AttackLogger;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -10,6 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 public class Delivery {
 
@@ -139,4 +143,24 @@ public class Delivery {
         return response;
     }
 
+    public static IntentionPack doPost(String  endpoint, IntentionPack  body) {
+        HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+        IntentionPack response = null;
+        try {
+            HttpContent content = ByteArrayContent.fromString(null, Converter.toJson(body));
+            HttpRequest httpRequest = requestFactory.buildPostRequest(new GenericUrl(endpoint), content);
+            httpRequest.getHeaders().setContentType("application/json");
+            HttpResponse httpResponse = httpRequest.execute();
+            int responseCode = httpResponse.getStatusCode();
+            response = Converter.fromJson(httpResponse.getContent(), IntentionPack.class);
+            httpResponse.disconnect();
+        } catch (HttpResponseException e) {
+//            System.out.println(e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("Connection refused");
+        }
+
+        return response;
+    }
 }

@@ -1,8 +1,12 @@
 package ar.com.konomo.server;
 
+import ar.com.konomo.entity.Intention;
+import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.operators.AttackLogger;
 
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 public class Requester {
     private static String host;
@@ -30,4 +34,9 @@ public class Requester {
     public String sendPost(String object, String endpoint) {
         return Delivery.doPost(host + endpoint, object);
     }
+
+    public IntentionPack sendPost( IntentionPack object, String endpoint) {
+        return Delivery.doPost(host + endpoint, object);
+    }
+
 }
