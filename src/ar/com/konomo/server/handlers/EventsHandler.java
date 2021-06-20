@@ -1,7 +1,8 @@
 package ar.com.konomo.server.handlers;
 
-import ar.com.konomo.display.Initializer;
-import ar.com.konomo.server.Delivery;
+import ar.com.konomo.managers.GM;
+import ar.com.konomo.operators.EventMessageLog;
+import ar.com.konomo.server.Converter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -9,21 +10,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-public class ReadyHandler implements HttpHandler {
-    private static final int OK = 200;
-    private volatile static boolean ready = false;
-
+public class EventsHandler implements HttpHandler {
+    private GM manager;
+    private final int OK = 200;
+    private final int NOPE = 400;
 
     @Override
     public void handle(HttpExchange t) throws IOException {
+        EventMessageLog eventLog = manager.getEventLog();
+        String json = Converter.toJson(eventLog);
 
-        sendResponse(OK, "", t);
-        ready = true;
+        // Message message = new Message(200, json, null);
+
+        sendResponse(OK, json, t);
+
     }
 
-    public static boolean isReady(){
-        return ready;
+    public EventsHandler(GM manager) {
+        this.manager = manager;
     }
+
 
     public void sendResponse(int statusCode, String response, HttpExchange exchange) {
         try {

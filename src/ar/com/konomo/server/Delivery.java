@@ -1,5 +1,6 @@
 package ar.com.konomo.server;
 
+import ar.com.konomo.operators.AttackLogger;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.sun.net.httpserver.HttpExchange;
@@ -99,5 +100,43 @@ public class Delivery {
         return response;
     }
 
+    public static AttackLogger doGet(String endpoint, AttackLogger attackLogger) {
+        HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+        AttackLogger response = null;
+
+        try {
+            HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(endpoint));
+            HttpResponse httpResponse = httpRequest.execute();
+           // int responseCode = httpResponse.getStatusCode();
+           // Object responseBody =
+            response = Converter.fromJson(httpResponse.parseAsString(),AttackLogger.class);
+            httpResponse.disconnect();
+        } catch (IOException e) {
+            System.out.println("Connection refused");
+        }
+
+        return response;
+    }
+
+    public static String doPost(String endpoint, String body) {
+        HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+        String response = null;
+        try {
+            HttpContent content = ByteArrayContent.fromString(null, Converter.toJson(body));
+            HttpRequest httpRequest = requestFactory.buildPostRequest(new GenericUrl(endpoint), content);
+            httpRequest.getHeaders().setContentType("application/json");
+            HttpResponse httpResponse = httpRequest.execute();
+            int responseCode = httpResponse.getStatusCode();
+            response = Converter.fromJson(httpResponse.getContent(), String.class);
+            httpResponse.disconnect();
+        } catch (HttpResponseException e) {
+//            System.out.println(e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("Connection refused");
+        }
+
+        return response;
+    }
 
 }

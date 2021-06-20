@@ -1,7 +1,9 @@
 package ar.com.konomo.server.handlers;
 
-import ar.com.konomo.display.Initializer;
-import ar.com.konomo.server.Delivery;
+import ar.com.konomo.managers.GM;
+import ar.com.konomo.operators.AttackLogger;
+import ar.com.konomo.server.Converter;
+import ar.com.konomo.server.Message;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -9,21 +11,28 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-public class ReadyHandler implements HttpHandler {
-    private static final int OK = 200;
-    private volatile static boolean ready = false;
-
+public class AttackHandler implements HttpHandler {
+    private GM manager;
+    private final int OK = 200;
+    private final int NOPE = 400;
 
     @Override
     public void handle(HttpExchange t) throws IOException {
+//mepa q esto puede no ser necesario si el manager permamentemente se está guardando esta info al validar las intenciones...
+        AttackLogger attackLogger = manager.getAttackLogs();
 
-        sendResponse(OK, "", t);
-        ready = true;
+        Message message = new Message(OK,"",attackLogger);
+        String json = Converter.toJson(message);
+
+
+        sendResponse(OK, json, t);
+
     }
 
-    public static boolean isReady(){
-        return ready;
+    public AttackHandler(GM manager) {
+        this.manager = manager;
     }
+
 
     public void sendResponse(int statusCode, String response, HttpExchange exchange) {
         try {

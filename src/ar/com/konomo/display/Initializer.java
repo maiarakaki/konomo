@@ -12,10 +12,10 @@ import ar.com.konomo.server.Message;
 import ar.com.konomo.server.PlayerCoords;
 import ar.com.konomo.server.Requester;
 import ar.com.konomo.server.handlers.HandshakeHandler;
+import ar.com.konomo.server.logic.Game;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import static ar.com.konomo.Main.BOARD_SIZE;
 import static ar.com.konomo.Main.NINJAS;
@@ -37,6 +37,10 @@ public class Initializer {
         isReady = ready;
     }
 
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
     public Initializer(Display display, GM manager) {
         this.display = display;
         this.gameManager = manager;
@@ -56,15 +60,13 @@ public class Initializer {
         String input;
         Message message = null;
 
-        player2 = initializeClient();
-        System.out.println("player 2 ready... apparently...");
 
-        display.retrieveBoard(player2);
 
         switch (userOption) {
             case "N": {
-                gameMode = GameMode.HOST;
-                input = showOptions(GameMode.HOST);
+                gameMode = GameMode.GUEST;
+
+                input = showOptions(gameMode);
                 System.out.println(input);
                 if (Integer.parseInt(input) == 1) {
                     //  attemptConnection();
@@ -103,7 +105,7 @@ public class Initializer {
             case "C": {
                 gameMode = GameMode.GUEST;
 
-                input = showOptions(GameMode.GUEST);
+                input = showOptions(gameMode);
                 System.out.println(input);
 
                 if (Integer.parseInt(input) == 1) {
@@ -139,7 +141,17 @@ public class Initializer {
 
 
                 player2 = initializeClient();
-                System.out.println("Le pido datos al cliente....");
+
+                Requester requester = new Requester();
+
+                //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
+                requester.setIp("127.0.0.1:8001");
+                String json = Converter.toJson(player.getName());
+                requester.sendPost(json, "/player");
+
+
+
+                display.retrieveBoard(player2);
             }
             break;
             case "X":
@@ -149,22 +161,6 @@ public class Initializer {
 
     }
 
-
-    private Message attemptConnection() {
-        Message message = null;
-        while (message == null || message.getCode() != 200) {
-            ip = display.serverCreation("Datos de conexión");
-            requester.setIp(ip);
-            message = requester.sendGet("/connect", Message.class);
-
-            if (message == null) {
-                System.out.println("Falló la conexión!");
-            }
-            // ver que hago si no me puedo conectar (???)
-        }
-        return message;
-
-    }
 
     private String showOptions(GameMode gameMode) {
         String input = "";

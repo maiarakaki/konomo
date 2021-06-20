@@ -3,18 +3,18 @@ package ar.com.konomo.server;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import ar.com.konomo.display.Initializer;
 import ar.com.konomo.managers.GM;
-import ar.com.konomo.server.handlers.CoordinateValidationHandler;
-import ar.com.konomo.server.handlers.HandshakeHandler;
-import ar.com.konomo.server.handlers.ReadyHandler;
+import ar.com.konomo.server.handlers.*;
 import com.sun.net.httpserver.HttpServer;
 
 public class Server {
     private HandshakeHandler handshakeHandler = new HandshakeHandler();
     private HttpServer server;
     private GM manager;
+    private Initializer initializer;
 
-    public Server(GM manager) {
+    public Server(GM manager, Initializer initializer) {
         this.manager = manager;
         try {
             /**
@@ -25,7 +25,9 @@ public class Server {
             server.createContext("/connect", new HandshakeHandler());
             server.createContext("/ready", new ReadyHandler());
             server.createContext("/validate", new CoordinateValidationHandler(manager));
-          //  server.createContext("/player", new PlayerHandler());
+            server.createContext("/hitMe", new AttackHandler(manager));
+            server.createContext("/events", new EventsHandler(manager));
+            server.createContext("/player", new PlayerHandler(manager));
 
 
             server.setExecutor(null); // creates a default executor

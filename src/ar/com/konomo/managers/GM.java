@@ -73,24 +73,6 @@ public class GM {
         return allValid;
     }
 
-    private List <Coordinate> getIntentionTargets(Map <Integer, Intention> intentions){
-        List <Coordinate> intentionTargets = new ArrayList<>();
-        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
-        ) {
-            intentionTargets.add(record.getValue().getCoordinate());
-        }
-        return intentionTargets;
-    }
-
-    private List<Intention> getIntentionList(Map <Integer, Intention> intentions){
-        List <Intention> intentionsList = new ArrayList<>();
-        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
-        ) {
-            intentionsList.add(record.getValue());
-        }
-        return intentionsList;
-    }
-
     public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
         boolean allValid = true;
         boolean commanderIsAlive = player.getMyNinjas().get(2).isAlive();
@@ -134,6 +116,24 @@ public class GM {
         }
 
         return allValid;
+    }
+
+    private List <Coordinate> getIntentionTargets(Map <Integer, Intention> intentions){
+        List <Coordinate> intentionTargets = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionTargets.add(record.getValue().getCoordinate());
+        }
+        return intentionTargets;
+    }
+
+    private List<Intention> getIntentionList(Map <Integer, Intention> intentions){
+        List <Intention> intentionsList = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionsList.add(record.getValue());
+        }
+        return intentionsList;
     }
 
     public OpError getErrors(){
