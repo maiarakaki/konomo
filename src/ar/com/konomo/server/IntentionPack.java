@@ -11,16 +11,18 @@ import java.util.Map;
 public class IntentionPack {
     private Map<Integer, Intention> intentions;
     private List<Shinobi> ninjaList;
-    private Board board;
     private OpError errors;
     public boolean allGood;
 
-    public IntentionPack(Map<Integer, Intention> intentions, List<Shinobi> ninjaList, Board board, boolean allGood) {
+    public IntentionPack(Map<Integer, Intention> intentions, List<Shinobi> ninjaList, boolean allGood) {
         this.intentions = intentions;
         this.ninjaList = ninjaList;
-        this.board = board;
         this.allGood = allGood;
 
+    }
+
+    public void setAllGood(boolean allGood) {
+        this.allGood = allGood;
     }
 
     public Map<Integer, Intention> getIntentions() {
@@ -31,9 +33,6 @@ public class IntentionPack {
         return ninjaList;
     }
 
-    public Board getBoard() {
-        return board;
-    }
 
     public OpError getErrors() {
         if (errors == null) {

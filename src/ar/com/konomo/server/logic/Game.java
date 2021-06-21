@@ -56,8 +56,10 @@ public class Game {
         gameManager.createGame();
         initializer.initiate();
         requester.setIp("127.0.0.1:8001");
-        player1 = initializer.getPlayer(GameMode.HOST);
-        player2 = initializer.getPlayer(GameMode.GUEST);
+/*        player1 = initializer.getPlayer(GameMode.HOST);
+        player2 = initializer.getPlayer(GameMode.GUEST);*/
+        player1 = gameManager.getPlayer1();
+        player2 = gameManager.getPlayer2();
         mode = initializer.getGameMode();
 
         play();
@@ -76,6 +78,9 @@ public class Game {
 
         while (gameState == GameState.ON) {
             Map<Integer, Intention> playerIntentions = new HashMap<>();
+
+
+
            if (mode == GameMode.HOST) {
                playerInTurn = player1;
 
@@ -118,21 +123,19 @@ public class Game {
                 System.out.println("==============FIN DE TURNO=============");
 
                 while (!ReadyHandler.isReady()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
                 }
             }
         } else {
+               player2 = initializer.getPlayer(GameMode.GUEST);
                playerInTurn = player2;
-
+               while (!ReadyHandler.isReady()) ;
+               ReadyHandler.setReady(false);
 
                Message message;
 
                attackLogger = requester.sendGet("/hitMe", attackLogger);
-               message = requester.sendGet("/events", String.class);
+               message = (Message) requester.sendGet("/events", String.class);
 
                if (!attackLogger.getAttackLog().isEmpty()) {
                    gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
@@ -147,18 +150,20 @@ public class Game {
                    }
                }
                display.retrieveBoard(playerInTurn);
+               /**
+                * //pido las intenciones al cliente y las valido... salgo de acá con las intenciones para actualizar en el board
+                */
                playerIntentions = getClientIntentions();
+               //necesito hacer un get para tener un un glimpse del board enemigo para actualizar el del cliente...
+
+               Message messageX= requester.sendGet("/enemyBoard", Board.class);
+               messageX.getMessage();
+
+            //   gameManager.updateBoards(playerInTurn, playerIntentions, enemyBoard);
 
 
                requester.sendGet("/ready", Message.class);
 
-               while (!ReadyHandler.isReady()) {
-                   try {
-                       Thread.sleep(500);
-                   } catch (InterruptedException e) {
-                       e.printStackTrace();
-                   }
-               }
            }
         }
 
@@ -180,11 +185,11 @@ private Map<Integer, Intention>  getClientIntentions(){
     //  requester.setIp("127.0.0.1:8001");
 
     try {
-        IntentionPack intentionPack = new IntentionPack(playerIntentions, playerInTurn.getMyNinjas(), playerInTurn.getLocalBoard(),false);
+        IntentionPack intentionPack = new IntentionPack(playerIntentions, playerInTurn.getMyNinjas(),false);
        // String json = Converter.toJson(intentionPack);
         intentionPack = requester.sendPost(intentionPack, "/intentions");
 
-        if (playerIntentions == null) {
+        if (intentionPack == null) {
             System.out.println("Conexión rechazada!");
             return null;
         }

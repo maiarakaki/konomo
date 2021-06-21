@@ -241,5 +241,54 @@ public class GM {
         }
         return allValid;
     }
+
+    //PROBAR SI ANDA CON EL BOARD DEL CLIENTE. SINO, USAR EL P2 STOREADO LOCALLY
+    public boolean validate(Map<Integer, Intention> playerIntentions, List<Shinobi> ninjas) {
+
+        boolean allValid = true;
+        boolean commanderIsAlive = ninjas.get(2).isAlive();
+        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
+        try {
+            if (coordinateRangeValidator.validate(coordinates)) {
+                List<Intention> intentionList = getIntentionList(playerIntentions);
+                if(intentionViabilityValidator.isViable(intentionList)){
+                    for (Map.Entry<Integer, Intention> record : playerIntentions.entrySet()
+                    ) {
+                        record.getValue().setValid(true);
+                        if (record.getValue().getAction() == Action.MOVE) {
+                            Shinobi ninja = ninjas.get(record.getKey());
+                            Coordinate coordinate = record.getValue().getCoordinate();
+                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
+                            if (!moveIsValid) {
+                                record.getValue().setValid(false);
+
+                                allValid =false;
+                            }
+                        }
+
+                    }
+                    if (!allValid) {
+                        errors.addAll(moveValidator.getError());
+                    }
+
+                } else {
+                    errors.addAll(intentionViabilityValidator.getErrors());
+                    allValid =false;
+                }
+            } else {
+                errors.addAll(coordinateRangeValidator.getErrors());
+                allValid =false;
+            }
+
+
+
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return allValid;
+    }
+
+
 }
 

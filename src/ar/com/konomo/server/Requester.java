@@ -1,5 +1,6 @@
 package ar.com.konomo.server;
 
+import ar.com.konomo.entity.Board;
 import ar.com.konomo.entity.Intention;
 import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.operators.AttackLogger;
@@ -23,12 +24,12 @@ public class Requester {
         return Delivery.doGet(host + endpoint, type);
     }
 
-    public AttackLogger sendGet(String endpoint, AttackLogger attackLogger) {
-        return Delivery.doGet(host + endpoint, attackLogger);
-    }
-
     public void setIp(String ip) {
         host = "http://"+ ip;
+    }
+
+    public AttackLogger sendGet(String endpoint, AttackLogger attackLogger) {
+        return Delivery.doGet(host + endpoint, attackLogger);
     }
 
     public String sendPost(String object, String endpoint) {
@@ -36,6 +37,9 @@ public class Requester {
     }
 
     public IntentionPack sendPost( IntentionPack object, String endpoint) {
+        return Delivery.doPost(host + endpoint, object);
+    }
+    public Board sendPost(Board object, String endpoint) {
         return Delivery.doPost(host + endpoint, object);
     }
 
