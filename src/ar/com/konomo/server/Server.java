@@ -26,11 +26,11 @@ public class Server {
             server.createContext("/ready", new ReadyHandler());
             server.createContext("/validate", new CoordinateValidationHandler(manager));
             server.createContext("/intentions", new IntentionHandler(manager));
+            server.createContext("/actions", new ActionHandler(manager));
             server.createContext("/hitMe", new AttackHandler(manager));
             server.createContext("/events", new EventsHandler(manager));
             server.createContext("/player", new PlayerHandler(manager));
             server.createContext("/gameState", new GameStateHandler(manager));
-            server.createContext("/enemyBoard", new BoardHandler(manager));
 
             server.setExecutor(null); // creates a default executor
             server.start();
