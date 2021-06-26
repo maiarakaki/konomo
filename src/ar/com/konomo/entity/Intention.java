@@ -1,16 +1,19 @@
 package ar.com.konomo.entity;
 
 import ar.com.konomo.enums.Action;
+import ar.com.konomo.enums.NinjaType;
 
 public class Intention {
     private Action action;
     private Coordinate coordinate;
     private boolean isValid;
+    private NinjaType ninjaType;
 
     public Intention(Action action, Coordinate coordinate) {
         this.action = action;
         this.coordinate = coordinate;
         isValid = false;
+        this.ninjaType = NinjaType.OBSTACLE;
     }
 
     public Intention (){}
@@ -37,5 +40,13 @@ public class Intention {
 
     public boolean isValid() {
         return isValid;
+    }
+
+    public NinjaType getNinjaType() {
+        return ninjaType;
+    }
+
+    public void setNinjaType(NinjaType ninjaType) {
+        this.ninjaType = ninjaType;
     }
 }

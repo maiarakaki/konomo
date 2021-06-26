@@ -18,7 +18,7 @@ public class ReadyHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange t) throws IOException {
 
-        if (ready) Game.switchARoo();
+       // if (ready) Game.switchARoo();
         ready = true;
         sendResponse(OK, "", t);
     }

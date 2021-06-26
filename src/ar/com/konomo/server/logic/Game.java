@@ -3,20 +3,20 @@ package ar.com.konomo.server.logic;
 import ar.com.konomo.display.Display;
 import ar.com.konomo.display.Initializer;
 import ar.com.konomo.entity.*;
+import ar.com.konomo.enums.Action;
 import ar.com.konomo.enums.GameMode;
 import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
+import ar.com.konomo.operators.BoardUpdater;
 import ar.com.konomo.operators.EventMessageLog;
 import ar.com.konomo.server.*;
 import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
 import ar.com.konomo.validators.WinValidator;
+import com.google.gson.internal.LinkedTreeMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
 
@@ -130,8 +130,8 @@ public class Game {
                     }
                 }
             } else {
-/*                while (!ReadyHandler.isReady()) ;
-                ReadyHandler.setReady(false);*/
+                while (!ReadyHandler.isReady()) ;
+                ReadyHandler.setReady(false);
 
                 if (mode == GameMode.GUEST) {
                     player2 = initializer.getPlayer(GameMode.GUEST);
@@ -159,11 +159,31 @@ public class Game {
                      * //pido las intenciones al cliente y las valido... salgo de acá con las intenciones para actualizar en el board
                      */
                     playerIntentions = getClientIntentions();
-                    //necesito hacer un get para tener un un glimpse del board enemigo para actualizar el del cliente...
 
-                    Message messageX= requester.sendGet("/enemyBoard", Board.class);
-                    messageX.getMessage();
+                    try{
+                        player2.setEnemyBoard(sendClientIntentions(playerIntentions));
+                    }
+                    catch (Exception ex){
+                        System.out.println("rompimo todo");
+                    }
 
+
+                    List <Shinobi> movedNinjas = new ArrayList<>();
+                    for (Map.Entry<Integer, Intention> intention : playerIntentions.entrySet()
+                         ) {
+                        Shinobi myNinja = player2.getMyNinjas().get(intention.getKey());
+                        if (intention.getValue().getAction() == Action.MOVE) {
+                            movedNinjas.add(myNinja);
+                            BoardUpdater boardUpdater = new BoardUpdater();
+                            boardUpdater.update(player2.getLocalBoard(),intention.getValue(), myNinja);
+                            myNinja.setLastActionTaken(Action.MOVE);
+                        }
+                        gameManager.place(movedNinjas, player2.getLocalBoard());
+                    }
+                    display.retrieveBoard(player2);
+
+
+                    
                     //   gameManager.updateBoards(playerInTurn, playerIntentions, enemyBoard);
 
 
@@ -192,6 +212,31 @@ public class Game {
        // server.stop();
     }
 
+private String[][] sendClientIntentions( Map<Integer, Intention> clientIntentions) {
+
+    List<Intention> intentionList = new ArrayList<>();
+    IntentionPack intentionPack = new IntentionPack(intentionList, player2.getMyNinjas(), false, player2.getEnemyBoard());
+    for (Map.Entry<Integer, Intention> entry : clientIntentions.entrySet()
+    ) {
+        intentionList.add(entry.getValue());
+    }
+    OpError errors;
+
+    try {
+
+        intentionPack = requester.sendPost(intentionPack, "/actions");
+
+        if (intentionPack == null) {
+            System.out.println("Conexión rechazada!");
+            return null;
+        }
+    } catch (Exception ex) {
+        System.out.println(ex.getMessage());
+    }
+
+    return intentionPack.getKnownBoard();
+}
+
 private Map<Integer, Intention>  getClientIntentions(){
     Map<Integer, Intention>  playerIntentions = display.gamePlay(playerInTurn);
     List<Intention> intentionList = new ArrayList<>();
@@ -205,7 +250,7 @@ private Map<Integer, Intention>  getClientIntentions(){
     //  requester.setIp("127.0.0.1:8001");
 
     try {
-        IntentionPack intentionPack = new IntentionPack(intentionList, playerInTurn.getMyNinjas(),false);
+        IntentionPack intentionPack = new IntentionPack(intentionList, playerInTurn.getMyNinjas(),false, player2.getEnemyBoard());
        // String json = Converter.toJson(intentionPack);
         intentionPack = requester.sendPost(intentionPack, "/intentions");
 
@@ -242,10 +287,10 @@ private Map<Integer, Intention>  getClientIntentions(){
     return playerIntentions;
 }
 
-    public static void switchARoo(){
+/*    public static void switchARoo(){
         if (playerInTurn == player1) {
             playerInTurn = player2;
         } else {playerInTurn = player1;}
-    }
+    }*/
 
 }

@@ -13,11 +13,13 @@ public class IntentionPack {
   //  private List<Shinobi> ninjaList;
     private OpError errors;
     public boolean allGood;
+    private String[][] knownBoard;
 
-    public IntentionPack(List<Intention> intentions, List<Shinobi> ninjaList, boolean allGood) {
+    public IntentionPack(List<Intention> intentions, List<Shinobi> ninjaList, boolean allGood, String[][] knownBoard) {
         this.intentions = intentions;
        // this.ninjaList = ninjaList;
         this.allGood = allGood;
+        this.knownBoard = knownBoard;
 
     }
 
@@ -47,5 +49,13 @@ public class IntentionPack {
 
     public void setErrors(OpError errors) {
         this.errors = errors;
+    }
+
+    public String[][] getKnownBoard() {
+        return knownBoard;
+    }
+
+    public void setKnownBoard(String[][] knownBoard) {
+        this.knownBoard = knownBoard;
     }
 }
