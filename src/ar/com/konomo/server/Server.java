@@ -25,6 +25,7 @@ public class Server {
             server.createContext("/connect", new HandshakeHandler());
             server.createContext("/ready", new ReadyHandler());
             server.createContext("/validate", new CoordinateValidationHandler(manager));
+            server.createContext("/intentions", new IntentionHandler(manager));
             server.createContext("/hitMe", new AttackHandler(manager));
             server.createContext("/events", new EventsHandler(manager));
             server.createContext("/player", new PlayerHandler(manager));

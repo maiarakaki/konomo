@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 public class IntentionPack {
-    private Map<Integer, Intention> intentions;
-    private List<Shinobi> ninjaList;
+    private List <Intention>intentions;
+  //  private List<Shinobi> ninjaList;
     private OpError errors;
     public boolean allGood;
 
-    public IntentionPack(Map<Integer, Intention> intentions, List<Shinobi> ninjaList, boolean allGood) {
+    public IntentionPack(List<Intention> intentions, List<Shinobi> ninjaList, boolean allGood) {
         this.intentions = intentions;
-        this.ninjaList = ninjaList;
+       // this.ninjaList = ninjaList;
         this.allGood = allGood;
 
     }
@@ -25,13 +25,13 @@ public class IntentionPack {
         this.allGood = allGood;
     }
 
-    public Map<Integer, Intention> getIntentions() {
+    public List<Intention> getIntentions() {
         return intentions;
     }
 
-    public List<Shinobi> getNinjaList() {
+/*    public List<Shinobi> getNinjaList() {
         return ninjaList;
-    }
+    }*/
 
 
     public OpError getErrors() {
@@ -41,7 +41,7 @@ public class IntentionPack {
         return errors;
     }
 
-    public void setIntentions(Map<Integer, Intention> intentions) {
+    public void setIntentions(List<Intention> intentions) {
         this.intentions = intentions;
     }
 

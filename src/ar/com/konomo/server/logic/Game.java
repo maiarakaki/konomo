@@ -24,25 +24,27 @@ public class Game {
     private Client client;
     private GM gameManager;
     private Display display;
-    private Player player1;
-    private Player player2;
+    private static Player player1;
+    private static Player player2;
     private WinValidator winValidator;
     private List<Coordinate> coordinates;
-    private Player playerInTurn;
+   // private Player playerInTurn;
     private Player adversary;
     public static GameMode mode;
     private Initializer initializer;
     private Requester requester;
 
     public static volatile GameState gameState = GameState.ON;
+    public static volatile Player playerInTurn;
+
 
 
     public Game (){
         gameManager = new GM();
         display = new Display();
-        initializer = new Initializer(display, gameManager);
-        server = new Server(gameManager, initializer);
         requester = new Requester();
+        initializer = new Initializer(display, gameManager, requester);
+        server = new Server(gameManager, initializer);
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
@@ -78,93 +80,106 @@ public class Game {
 
         while (gameState == GameState.ON) {
             Map<Integer, Intention> playerIntentions = new HashMap<>();
+           // while (!ReadyHandler.isReady()) ;
 
 
-
-           if (mode == GameMode.HOST) {
-               playerInTurn = player1;
-
-
-               /**
-                * en teoría el attacklogguer "VIVE" en el manager, en el server... asi que en teoría cuando valido las intenciones del cliente,
-                * debería ser capaz de analizarlo localmente
-                */
-            attackLogger = gameManager.getAttackLogs();
+            if (mode == GameMode.HOST) {
+                playerInTurn = player1;
 
 
-             if (!attackLogger.getAttackLog().isEmpty()) {
-                gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
-                gameManager.getEventLog().show();
-                gameOver = winValidator.winConditionsMet(player1, player2);
+                /**
+                 * en teoría el attacklogguer "VIVE" en el manager, en el server... asi que en teoría cuando valido las intenciones del cliente,
+                 * debería ser capaz de analizarlo localmente
+                 */
+                attackLogger = gameManager.getAttackLogs();
 
-                if (gameOver) {
-                    gameState = GameState.OVER;
+
+                if (!attackLogger.getAttackLog().isEmpty()) {
+                    gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
+                    gameManager.getEventLog().show();
+                    gameOver = winValidator.winConditionsMet(player1, player2);
+
+                    if (gameOver) {
+                        gameState = GameState.OVER;
+                    }
                 }
-            }
 
-            if (gameState == GameState.ON) { //<- soy el servidor, sé que el juego no terminó
-                display.retrieveBoard(playerInTurn); //<-le muestro el board al jugador en juego y le pido sus intenciones
-                playerIntentions = display.gamePlay(playerInTurn);
-                allGood = gameManager.validate(playerIntentions, playerInTurn); //el manager valida las intenciones ... ACÁ NECESITO BIFURCAR SI ES CLIENTE
+                if (gameState == GameState.ON) { //<- soy el servidor, sé que el juego no terminó
+                    display.retrieveBoard(playerInTurn); //<-le muestro el board al jugador en juego y le pido sus intenciones
+                    playerIntentions = display.gamePlay(playerInTurn);
+                    allGood = gameManager.validate(playerIntentions, playerInTurn); //el manager valida las intenciones ... ACÁ NECESITO BIFURCAR SI ES CLIENTE
 
-                while (!allGood) {
-                    OpError errors = gameManager.getErrors();
-                    playerIntentions = display.ammendIntentions(playerIntentions, errors, playerInTurn);
-                    allGood = gameManager.validate(playerIntentions, playerInTurn);
+                    while (!allGood) {
+                        OpError errors = gameManager.getErrors();
+                        playerIntentions = display.ammendIntentions(playerIntentions, errors, playerInTurn);
+                        allGood = gameManager.validate(playerIntentions, playerInTurn);
+                    }
+                    gameManager.updateBoards(playerInTurn, playerIntentions, adversary.getLocalBoard());
+                    gameManager.getEventLog().show();
+                    display.retrieveBoard(playerInTurn);
+
+
+
+                    // gameOver = winValidator.winConditionsMet(player1, player2);
+
+                    System.out.println("==============FIN DE TURNO=============");
+                    requester.sendGet("/ready", Message.class);
+
+                    while (!ReadyHandler.isReady()) {
+
+                    }
                 }
-                gameManager.updateBoards(playerInTurn, playerIntentions, adversary.getLocalBoard());
-                gameManager.getEventLog().show();
-                display.retrieveBoard(playerInTurn);
+            } else {
+/*                while (!ReadyHandler.isReady()) ;
+                ReadyHandler.setReady(false);*/
+
+                if (mode == GameMode.GUEST) {
+                    player2 = initializer.getPlayer(GameMode.GUEST);
+                    playerInTurn = player2;
+
+                    Message message;
+
+                    attackLogger = requester.sendGet("/hitMe", attackLogger);
+                    message = (Message) requester.sendGet("/events", String.class);
+
+                    if (!attackLogger.getAttackLog().isEmpty()) {
+                        gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
+                        EventMessageLog eventLog = Converter.fromJson(message.getMessage(), EventMessageLog.class);
+                        eventLog.show();
+                        //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
+
+                        if (winValidator.allNinjasKilled(playerInTurn)) {
+                            requester.setIp("127.0.0.1:8001");
+                            String json = Converter.toJson(playerInTurn.getMyNinjas());
+                            requester.sendPost(json, "/gameState"); //<-- mando mis ninjas para que los actualice
+                        }
+                    }
+                    display.retrieveBoard(playerInTurn);
+                    /**
+                     * //pido las intenciones al cliente y las valido... salgo de acá con las intenciones para actualizar en el board
+                     */
+                    playerIntentions = getClientIntentions();
+                    //necesito hacer un get para tener un un glimpse del board enemigo para actualizar el del cliente...
+
+                    Message messageX= requester.sendGet("/enemyBoard", Board.class);
+                    messageX.getMessage();
+
+                    //   gameManager.updateBoards(playerInTurn, playerIntentions, enemyBoard);
 
 
+                    requester.sendGet("/ready", Message.class);
 
-                gameOver = winValidator.winConditionsMet(player1, player2);
+                    while(!ReadyHandler.isReady()){
 
-                System.out.println("==============FIN DE TURNO=============");
-
-                while (!ReadyHandler.isReady()) {
+                    }
+                    ReadyHandler.setReady(false);
 
                 }
-            }
-        } else {
-               player2 = initializer.getPlayer(GameMode.GUEST);
-               playerInTurn = player2;
-               while (!ReadyHandler.isReady()) ;
-               ReadyHandler.setReady(false);
-
-               Message message;
-
-               attackLogger = requester.sendGet("/hitMe", attackLogger);
-               message = (Message) requester.sendGet("/events", String.class);
-
-               if (!attackLogger.getAttackLog().isEmpty()) {
-                   gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
-                   EventMessageLog eventLog = Converter.fromJson(message.getMessage(), EventMessageLog.class);
-                   eventLog.show();
-                   //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
-
-                   if (winValidator.allNinjasKilled(playerInTurn)) {
-                       requester.setIp("127.0.0.1:8001");
-                       String json = Converter.toJson(playerInTurn.getMyNinjas());
-                       requester.sendPost(json, "/gameState"); //<-- mando mis ninjas para que los actualice
-                   }
-               }
-               display.retrieveBoard(playerInTurn);
-               /**
-                * //pido las intenciones al cliente y las valido... salgo de acá con las intenciones para actualizar en el board
-                */
-               playerIntentions = getClientIntentions();
-               //necesito hacer un get para tener un un glimpse del board enemigo para actualizar el del cliente...
-
-               Message messageX= requester.sendGet("/enemyBoard", Board.class);
-               messageX.getMessage();
-
-            //   gameManager.updateBoards(playerInTurn, playerIntentions, enemyBoard);
+                }
 
 
-               requester.sendGet("/ready", Message.class);
 
-           }
+            if (winValidator.winConditionsMet(player1, player2)) gameState = GameState.OVER;
         }
 
 
@@ -179,13 +194,18 @@ public class Game {
 
 private Map<Integer, Intention>  getClientIntentions(){
     Map<Integer, Intention>  playerIntentions = display.gamePlay(playerInTurn);
+    List<Intention> intentionList = new ArrayList<>();
+    for (Map.Entry<Integer,Intention> entry: playerIntentions.entrySet()
+         ) {
+        intentionList.add(entry.getValue());
+    }
     OpError errors;
 
 
     //  requester.setIp("127.0.0.1:8001");
 
     try {
-        IntentionPack intentionPack = new IntentionPack(playerIntentions, playerInTurn.getMyNinjas(),false);
+        IntentionPack intentionPack = new IntentionPack(intentionList, playerInTurn.getMyNinjas(),false);
        // String json = Converter.toJson(intentionPack);
         intentionPack = requester.sendPost(intentionPack, "/intentions");
 
@@ -195,9 +215,17 @@ private Map<Integer, Intention>  getClientIntentions(){
         }
 
         while (!intentionPack.allGood ) {
+            intentionList.clear();
             errors = intentionPack.getErrors();
             playerIntentions = display.ammendIntentions(playerIntentions, errors, playerInTurn);
-            intentionPack.setIntentions(playerIntentions);
+
+
+            intentionList = new ArrayList<>();
+            for (Map.Entry<Integer,Intention> entry: playerIntentions.entrySet()
+            ) {
+                intentionList.add(entry.getValue());
+            }
+            intentionPack.setIntentions(intentionList);
             errors = new OpError();
             intentionPack.setErrors(errors);
 
@@ -205,7 +233,7 @@ private Map<Integer, Intention>  getClientIntentions(){
             intentionPack = requester.sendPost(intentionPack, "/intentions");
 
         }
-        playerIntentions = intentionPack.getIntentions();
+        intentionList = intentionPack.getIntentions();
 
 
     } catch (Exception ex) {
@@ -213,5 +241,11 @@ private Map<Integer, Intention>  getClientIntentions(){
     }
     return playerIntentions;
 }
+
+    public static void switchARoo(){
+        if (playerInTurn == player1) {
+            playerInTurn = player2;
+        } else {playerInTurn = player1;}
+    }
 
 }

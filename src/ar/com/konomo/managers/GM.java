@@ -289,6 +289,59 @@ public class GM {
         return allValid;
     }
 
+    public List <Coordinate> getIntentionTargets(List<Intention> clientIntentions) {
+        List <Coordinate> coordinates = new ArrayList<>();
+        for (Intention intention: clientIntentions
+        ) {
+            coordinates.add(intention.getCoordinate());
+        }
+        return coordinates;
+    }
+
+    public boolean validate(List<Intention> playerIntentions) {
+
+        boolean allValid = true;
+        boolean commanderIsAlive = player2.getMyNinjas().get(2).isAlive();
+        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
+        try {
+            if (coordinateRangeValidator.validate(coordinates)) {
+                // List<Intention> intentionList = playerIntentions;
+                if(intentionViabilityValidator.isViable(playerIntentions)){
+                    int i = 0;
+                    for (Intention intention: playerIntentions
+                    ) {
+                        if (intention.getAction() == Action.MOVE) {
+                            Shinobi ninja = player2.getMyNinjas().get(i);
+                            Coordinate coordinate = intention.getCoordinate();
+                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
+                            if (!moveIsValid){
+                                intention.setValid(false);
+                            }
+                            allValid = false;
+                        }
+                    }
+
+                    if (!allValid) {
+                        errors.addAll(moveValidator.getError());
+                    }
+
+                } else {
+                    errors.addAll(intentionViabilityValidator.getErrors());
+                    allValid =false;
+                }
+            } else {
+                errors.addAll(coordinateRangeValidator.getErrors());
+                allValid =false;
+            }
+
+
+
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return allValid;
+    }
 
 }
 

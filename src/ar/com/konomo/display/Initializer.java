@@ -41,9 +41,10 @@ public class Initializer {
         return gameMode;
     }
 
-    public Initializer(Display display, GM manager) {
+    public Initializer(Display display, GM manager, Requester requester) {
         this.display = display;
         this.gameManager = manager;
+        this.requester = requester;
         NinjaCreator ninjaCreator = new NinjaCreator();
         PlayerFactory playerFactory = new PlayerFactory(ninjaCreator);
         scan = new Scanner(System.in);
@@ -53,7 +54,7 @@ public class Initializer {
 
     public void initiate() {
 
-        requester = new Requester();
+       // requester = new Requester();
 
         display.titleScreen();
         String userOption = display.showOptions().toUpperCase();
@@ -142,7 +143,7 @@ public class Initializer {
 
                 player2 = initializeClient();
 
-                Requester requester = new Requester();
+             //   Requester requester = new Requester();
 
                 //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
                 requester.setIp("127.0.0.1:8001");
@@ -150,8 +151,11 @@ public class Initializer {
                 requester.sendPost(json, "/player");
 
 
-
-                display.retrieveBoard(player2);
+                try{
+                    display.retrieveBoard(player2);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
             }
             break;
             case "X":
@@ -243,7 +247,7 @@ public class Initializer {
         List<Coordinate> coordinates= (display.playerSettings(player));
         playerCoords.setNinjaList(player.getMyNinjas());
         playerCoords.setCoords(coordinates);
-        Requester requester = new Requester();
+     //   Requester requester = new Requester();
 
         //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
         requester.setIp("127.0.0.1:8001");

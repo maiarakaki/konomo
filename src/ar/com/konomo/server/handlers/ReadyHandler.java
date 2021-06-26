@@ -2,6 +2,7 @@ package ar.com.konomo.server.handlers;
 
 import ar.com.konomo.display.Initializer;
 import ar.com.konomo.server.Delivery;
+import ar.com.konomo.server.logic.Game;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -17,8 +18,9 @@ public class ReadyHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange t) throws IOException {
 
-        sendResponse(OK, "", t);
+        if (ready) Game.switchARoo();
         ready = true;
+        sendResponse(OK, "", t);
     }
 
     public static boolean isReady(){

@@ -23,10 +23,12 @@ public class IntentionHandler implements HttpHandler {
     public void handle(HttpExchange t) throws IOException {
 //mepa q esto puede no ser necesario si el manager permamentemente se está guardando esta info al validar las intenciones...
         IntentionPack clientIntentionPack =  Converter.fromJson(t.getRequestBody(), IntentionPack.class);
-        Map<Integer, Intention> intentions = clientIntentionPack.getIntentions();
-        List<Shinobi> clientNinjas = clientIntentionPack.getNinjaList();
+        //Map<Integer, Intention> intentions = clientIntentionPack.getIntentions();
+        //List<Shinobi> clientNinjas = clientIntentionPack.getNinjaList();
 
-        boolean allGood = manager.validate(intentions, clientNinjas);
+
+
+        boolean allGood = manager.validate(clientIntentionPack.getIntentions());
         OpError errors = manager.getErrors();
 
 
@@ -41,12 +43,23 @@ public class IntentionHandler implements HttpHandler {
 
     public void sendResponse(int statusCode, String response, HttpExchange exchange) {
         try {
-            exchange.sendResponseHeaders(statusCode, response.length());
+            /*exchange.sendResponseHeaders(statusCode, response.length());
+            OutputStream outStream = exchange.getResponseBody();
+            outStream.write(response.getBytes(StandardCharsets.UTF_8));*/
+/*            byte[] bs = response.getBytes("UTF-8");
+            exchange.sendResponseHeaders(statusCode, bs.length);
+            OutputStream os = exchange.getResponseBody();*/
+/*            outStream.flush();
+            outStream.close();*/
+            exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
             OutputStream outStream = exchange.getResponseBody();
             outStream.write(response.getBytes(StandardCharsets.UTF_8));
-            outStream.flush();
             outStream.close();
-        } catch (IOException e) {
+
+
+
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
