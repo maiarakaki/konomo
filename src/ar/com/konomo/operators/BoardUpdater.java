@@ -109,6 +109,8 @@ public class BoardUpdater {
     }
 
 
+
+
     private void logEvent(Event type, Coordinate coord){
         try {
             eventLog.log(type, coord);

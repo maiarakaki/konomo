@@ -7,6 +7,7 @@ import ar.com.konomo.enums.NinjaType;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.operators.BoardUpdater;
 import ar.com.konomo.operators.EventMessageLog;
+import ar.com.konomo.operators.NinjaPlacer;
 import ar.com.konomo.validators.*;
 
 import java.util.*;
@@ -150,13 +151,18 @@ public class GM {
     }
 
     public void place(List<Shinobi> placeables, Board board) {
-        try {
+/*        try {
             for (Placeable item: placeables
             ) {
                 board.place(item.getRowIndex(), item.getColumnIndex(), item);
             }
         }catch (Exception ex) {
             System.out.println(ex.getMessage() + " place ninjas en el board falló");
+        }*/
+        try {
+            NinjaPlacer.place(placeables, board);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
