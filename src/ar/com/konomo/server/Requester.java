@@ -23,13 +23,12 @@ public class Requester {
     public Message sendGet(String endpoint, Type type) {
         return Delivery.doGet(host + endpoint, type);
     }
+    public AttackLogger sendGet(String endpoint) {
+        return Delivery.doGet(host + endpoint);
+    }
 
     public void setIp(String ip) {
         host = "http://"+ ip;
-    }
-
-    public AttackLogger sendGet(String endpoint, AttackLogger attackLogger) {
-        return Delivery.doGet(host + endpoint, attackLogger);
     }
 
     public String sendPost(String object, String endpoint) {

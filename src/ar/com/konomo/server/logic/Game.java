@@ -136,16 +136,49 @@ public class Game {
                 if (mode == GameMode.GUEST) {
                     player2 = initializer.getPlayer(GameMode.GUEST);
                     playerInTurn = player2;
-
+/**
+ * intento de recuperar el attack logger como dior manda..
+ */
                     Message message;
+                    try {
+                        attackLogger = requester.sendGet("/hitMe");
 
-                    attackLogger = requester.sendGet("/hitMe", attackLogger);
+                    } catch (Exception ex) {
+                        System.out.println("exception en el attacklogger vieja");
+                        System.out.println(ex.getMessage());
+                    }
+
                     message = (Message) requester.sendGet("/events", String.class);
 
                     if (!attackLogger.getAttackLog().isEmpty()) {
                         gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
-                        EventMessageLog eventLog = Converter.fromJson(message.getMessage(), EventMessageLog.class);
-                        eventLog.show();
+
+                        try{
+                            gameManager.getEventLog().show();
+                        }catch (Exception ex) {
+                            System.out.println(ex.getMessage());
+                        }
+
+                      /*  EventMessageLog eventLog = Converter.fromJson(message.getMessage(), EventMessageLog.class);
+
+                        try {
+                            message = (Message) requester.sendGet("/events", String.class).getBody();
+                            LinkedTreeMap<String, ArrayList<String>> messages = (LinkedTreeMap<String, ArrayList<String>>) message.getBody();
+                            EventMessageLog eventMessageLog = new EventMessageLog();
+
+                            eventMessageLog.setPlayerLog(messages.get("playerLog")) ;
+                            eventMessageLog.show();
+*/
+/*                            for (String log: eventMessageLog.getPlayerLog()
+                            ) {
+                                System.out.println(log);
+                            }
+
+                        } catch (Exception ex) {
+                            System.out.println("exception en el mensaje vieja");
+                            System.out.println(ex.getMessage());
+                        }*/
+
                         //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
 
                         if (winValidator.allNinjasKilled(playerInTurn)) {

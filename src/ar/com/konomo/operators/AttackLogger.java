@@ -34,4 +34,8 @@ public class AttackLogger {
     public void clear(){
         attackLog.clear();
     }
+
+    public void setAttackLog(Map<Integer, Intention> attackLog) {
+        this.attackLog = attackLog;
+    }
 }

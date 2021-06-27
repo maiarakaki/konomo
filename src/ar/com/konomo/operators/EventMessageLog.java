@@ -45,4 +45,8 @@ public class EventMessageLog {
     public void setPlayerLog(List<String> playerLog) {
         this.playerLog = playerLog;
     }
+
+    public void clear(){
+        playerLog.clear();
+    }
 }

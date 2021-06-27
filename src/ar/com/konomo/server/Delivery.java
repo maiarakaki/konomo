@@ -102,7 +102,7 @@ public class Delivery {
         return response;
     }
 
-    public static AttackLogger doGet(String endpoint, AttackLogger attackLogger) {
+    public static AttackLogger doGet(String endpoint) {
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
         AttackLogger response = null;
 
