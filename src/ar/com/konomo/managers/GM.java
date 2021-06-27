@@ -49,6 +49,14 @@ public class GM {
         return player2;
     }
 
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
+    }
+
     public boolean validate(List<Coordinate> coordinates, Player player) {
 
         boolean allValid = false;
@@ -73,7 +81,26 @@ public class GM {
         return allValid;
     }
 
+    private List <Coordinate> getIntentionTargets(Map <Integer, Intention> intentions){
+        List <Coordinate> intentionTargets = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionTargets.add(record.getValue().getCoordinate());
+        }
+        return intentionTargets;
+    }
+
+    private List<Intention> getIntentionList(Map <Integer, Intention> intentions){
+        List <Intention> intentionsList = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
+        ) {
+            intentionsList.add(record.getValue());
+        }
+        return intentionsList;
+    }
+
     public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
+
         boolean allValid = true;
         boolean commanderIsAlive = player.getMyNinjas().get(2).isAlive();
         List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
@@ -118,24 +145,6 @@ public class GM {
         return allValid;
     }
 
-    private List <Coordinate> getIntentionTargets(Map <Integer, Intention> intentions){
-        List <Coordinate> intentionTargets = new ArrayList<>();
-        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
-        ) {
-            intentionTargets.add(record.getValue().getCoordinate());
-        }
-        return intentionTargets;
-    }
-
-    private List<Intention> getIntentionList(Map <Integer, Intention> intentions){
-        List <Intention> intentionsList = new ArrayList<>();
-        for (Map.Entry<Integer, Intention> record : intentions.entrySet()
-        ) {
-            intentionsList.add(record.getValue());
-        }
-        return intentionsList;
-    }
-
     public OpError getErrors(){
         return errors;
     }
@@ -167,15 +176,16 @@ public class GM {
             System.out.println(ex.getMessage() + " en setPleaceableCoords!");
         }
     }
-    
+
     public void updateBoards(Player player, Map <Integer, Intention> intentionMap, Board enemyBoard) {
+        attackLogger.clear();
         BoardUpdater boardUpdater = new BoardUpdater();
         Board myBoard = player.getLocalBoard();
         String[][] knownEnemyBoard = player.getEnemyBoard();
         List <Shinobi> movedNinjas = new ArrayList<>();
 
         for (Map.Entry<Integer, Intention> record: intentionMap.entrySet()
-             ) {
+        ) {
             Coordinate coordinate = record.getValue().getCoordinate();
             Shinobi myNinja = player.getMyNinjas().get(record.getKey());
             //FIXME TRANSFORMAR LAS COORDENADAS UNA VEZ Q VALIDO QUE ESTÁN EN RANGO PARA QUE SEA MAS FACIL OPERAR CON ELLAS EN TODOS LADOS!
@@ -199,27 +209,29 @@ public class GM {
         place(movedNinjas, myBoard);
         eventMessageLog = boardUpdater.getEventLog();
     }
-    
+
     public void updateBoards(Player player, Map <Integer, Intention> attackList) {
         eventMessageLog.getPlayerLog().clear();
         BoardUpdater boardUpdater = new BoardUpdater();
 
         for (Map.Entry<Integer, Intention> record: attackList.entrySet()
-             ) {
+        ) {
             Coordinate target = record.getValue().getCoordinate();
             boardUpdater.update(player.getLocalBoard(), target);
 
         }
-        //termino y vacío el mapa??
         eventMessageLog = boardUpdater.getEventLog();
         attackList.clear();
     }
-    
+
     public EventMessageLog getEventLog() {
         return eventMessageLog;
     }
 
     public AttackLogger getAttackLogs(){
+        if (attackLogger == null) {
+            attackLogger = new AttackLogger();
+        }
         return attackLogger;
     }
 
@@ -239,53 +251,6 @@ public class GM {
         } else {
             errors.addAll(coordinateRangeValidator.getErrors());
         }
-        return allValid;
-    }
-
-    //PROBAR SI ANDA CON EL BOARD DEL CLIENTE. SINO, USAR EL P2 STOREADO LOCALLY
-    public boolean validate(Map<Integer, Intention> playerIntentions, List<Shinobi> ninjas) {
-
-        boolean allValid = true;
-        boolean commanderIsAlive = ninjas.get(2).isAlive();
-        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
-        try {
-            if (coordinateRangeValidator.validate(coordinates)) {
-                List<Intention> intentionList = getIntentionList(playerIntentions);
-                if(intentionViabilityValidator.isViable(intentionList)){
-                    for (Map.Entry<Integer, Intention> record : playerIntentions.entrySet()
-                    ) {
-                        record.getValue().setValid(true);
-                        if (record.getValue().getAction() == Action.MOVE) {
-                            Shinobi ninja = ninjas.get(record.getKey());
-                            Coordinate coordinate = record.getValue().getCoordinate();
-                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
-                            if (!moveIsValid) {
-                                record.getValue().setValid(false);
-
-                                allValid =false;
-                            }
-                        }
-
-                    }
-                    if (!allValid) {
-                        errors.addAll(moveValidator.getError());
-                    }
-
-                } else {
-                    errors.addAll(intentionViabilityValidator.getErrors());
-                    allValid =false;
-                }
-            } else {
-                errors.addAll(coordinateRangeValidator.getErrors());
-                allValid =false;
-            }
-
-
-
-        }catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
         return allValid;
     }
 

@@ -30,4 +30,8 @@ public class AttackLogger {
     public Map<Integer, Intention> getAttackLog() {
         return attackLog;
     }
+
+    public void clear(){
+        attackLog.clear();
+    }
 }

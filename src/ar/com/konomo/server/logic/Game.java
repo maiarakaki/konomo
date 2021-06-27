@@ -180,6 +180,22 @@ public class Game {
                         }
                         gameManager.place(movedNinjas, player2.getLocalBoard());
                     }
+                    try {
+                        message = (Message) requester.sendGet("/events", String.class).getBody();
+                        LinkedTreeMap<String, ArrayList<String>> messages = (LinkedTreeMap<String, ArrayList<String>>) message.getBody();
+                        EventMessageLog eventMessageLog = new EventMessageLog();
+
+                        eventMessageLog.setPlayerLog(messages.get("playerLog")) ;
+
+                        for (String log: eventMessageLog.getPlayerLog()
+                             ) {
+                            System.out.println(log);
+                        }
+
+                    } catch (Exception ex) {
+                        System.out.println("exception en el mensaje vieja");
+                        System.out.println(ex.getMessage());
+                    }
                     display.retrieveBoard(player2);
 
 
@@ -189,10 +205,10 @@ public class Game {
 
                     requester.sendGet("/ready", Message.class);
 
-                    while(!ReadyHandler.isReady()){
+/*                    while(!ReadyHandler.isReady()){
 
                     }
-                    ReadyHandler.setReady(false);
+                    ReadyHandler.setReady(false);*/
 
                 }
                 }

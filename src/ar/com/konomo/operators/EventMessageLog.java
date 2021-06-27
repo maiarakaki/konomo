@@ -41,4 +41,8 @@ public class EventMessageLog {
             System.out.println(message);
         }
     }
+
+    public void setPlayerLog(List<String> playerLog) {
+        this.playerLog = playerLog;
+    }
 }
