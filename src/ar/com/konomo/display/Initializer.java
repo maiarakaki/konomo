@@ -65,9 +65,9 @@ public class Initializer {
 
         switch (userOption) {
             case "N": {
-                gameMode = GameMode.GUEST;
+                gameMode = GameMode.HOST;
 
-                input = showOptions(gameMode);
+                input = showOptions(GameMode.HOST);
                 System.out.println(input);
                 if (Integer.parseInt(input) == 1) {
                     //  attemptConnection();
@@ -96,17 +96,19 @@ public class Initializer {
                             e.printStackTrace();
                         }
                         ip = HandshakeHandler.getIp();
+
                     }
                 }
 
                 System.out.println("Conexión establecida! Juguemosss! =D");
                 player1 =initializePlayer();
+                gameManager.setPlayer1(player1);
             }
             break;
             case "C": {
                 gameMode = GameMode.GUEST;
 
-                input = showOptions(gameMode);
+                input = showOptions(GameMode.GUEST);
                 System.out.println(input);
 
                 if (Integer.parseInt(input) == 1) {
@@ -143,7 +145,6 @@ public class Initializer {
 
                 player2 = initializeClient();
 
-             //   Requester requester = new Requester();
 
                 //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
                 requester.setIp("127.0.0.1:8001");
@@ -285,5 +286,9 @@ public class Initializer {
         }
 
         return player;
+    }
+
+    public Requester getRequester() {
+        return requester;
     }
 }

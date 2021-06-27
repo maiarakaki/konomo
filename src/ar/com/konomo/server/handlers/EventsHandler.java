@@ -3,6 +3,7 @@ package ar.com.konomo.server.handlers;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.EventMessageLog;
 import ar.com.konomo.server.Converter;
+import ar.com.konomo.server.Message;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -17,11 +18,18 @@ public class EventsHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-        EventMessageLog eventLog = manager.getEventLog();
+      /*  EventMessageLog eventLog = manager.getEventLog();
         String json = Converter.toJson(eventLog);
 
         // Message message = new Message(200, json, null);
 
+        sendResponse(OK, json, t);
+*/
+        EventMessageLog eventLog = manager.getEventLog();
+        //String json = Converter.toJson(eventLog);
+
+        Message message = new Message(200, "", eventLog);
+        String json = Converter.toJson(message);
         sendResponse(OK, json, t);
 
     }

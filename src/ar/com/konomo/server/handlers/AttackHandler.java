@@ -21,8 +21,8 @@ public class AttackHandler implements HttpHandler {
 //mepa q esto puede no ser necesario si el manager permamentemente se está guardando esta info al validar las intenciones...
         AttackLogger attackLogger = manager.getAttackLogs();
 
-        Message message = new Message(OK,"",attackLogger);
-        String json = Converter.toJson(message);
+        //Message message = new Message(OK,"",attackLogger);
+        String json = Converter.toJson(attackLogger);
 
 
         sendResponse(OK, json, t);

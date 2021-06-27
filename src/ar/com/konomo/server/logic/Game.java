@@ -58,11 +58,13 @@ public class Game {
         gameManager.createGame();
         initializer.initiate();
         requester.setIp("127.0.0.1:8001");
-/*        player1 = initializer.getPlayer(GameMode.HOST);
-        player2 = initializer.getPlayer(GameMode.GUEST);*/
-        player1 = gameManager.getPlayer1();
-        player2 = gameManager.getPlayer2();
+
         mode = initializer.getGameMode();
+        /**
+         * la siguiente linea está así en el server, no decomentar
+         * hasta no haber separado client de server (creo)
+         */
+        //requester.sendGet("/ready", Message.class);
 
         play();
 
@@ -74,17 +76,25 @@ public class Game {
 
     public void play(){
       //  boolean gameOver = winValidator.winConditionsMet(player1, player2);
+        player1 = gameManager.getPlayer1();
+        player2 = gameManager.getPlayer2();
+        playerInTurn = player1;
+
         boolean gameOver;
         boolean allGood;
         AttackLogger attackLogger = new AttackLogger();
 
         while (gameState == GameState.ON) {
             Map<Integer, Intention> playerIntentions = new HashMap<>();
-           // while (!ReadyHandler.isReady()) ;
 
 
             if (mode == GameMode.HOST) {
-                playerInTurn = player1;
+                //playerInTurn = player1;
+
+                while(!ReadyHandler.isReady()){
+
+                }
+                ReadyHandler.setReady(false);
 
 
                 /**
@@ -95,7 +105,7 @@ public class Game {
 
 
                 if (!attackLogger.getAttackLog().isEmpty()) {
-                    gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
+                    gameManager.updateBoards(player1, attackLogger.getAttackLog());
                     gameManager.getEventLog().show();
                     gameOver = winValidator.winConditionsMet(player1, player2);
 
@@ -106,28 +116,23 @@ public class Game {
 
                 if (gameState == GameState.ON) { //<- soy el servidor, sé que el juego no terminó
                     display.retrieveBoard(playerInTurn); //<-le muestro el board al jugador en juego y le pido sus intenciones
-                    playerIntentions = display.gamePlay(playerInTurn);
-                    allGood = gameManager.validate(playerIntentions, playerInTurn); //el manager valida las intenciones ... ACÁ NECESITO BIFURCAR SI ES CLIENTE
+                    playerIntentions = display.gamePlay(player1);
+                    allGood = gameManager.validate(playerIntentions, player1);
 
                     while (!allGood) {
                         OpError errors = gameManager.getErrors();
-                        playerIntentions = display.ammendIntentions(playerIntentions, errors, playerInTurn);
-                        allGood = gameManager.validate(playerIntentions, playerInTurn);
+                        playerIntentions = display.ammendIntentions(playerIntentions, errors, player1);
+                        allGood = gameManager.validate(playerIntentions, player1);
                     }
-                    gameManager.updateBoards(playerInTurn, playerIntentions, adversary.getLocalBoard());
+                    gameManager.updateBoards(player1, playerIntentions, player2.getLocalBoard());
                     gameManager.getEventLog().show();
-                    display.retrieveBoard(playerInTurn);
+                    display.retrieveBoard(player1);
 
 
-
-                    // gameOver = winValidator.winConditionsMet(player1, player2);
 
                     System.out.println("==============FIN DE TURNO=============");
                     requester.sendGet("/ready", Message.class);
 
-                    while (!ReadyHandler.isReady()) {
-
-                    }
                 }
             } else {
                 while (!ReadyHandler.isReady()) ;
@@ -135,11 +140,9 @@ public class Game {
 
                 if (mode == GameMode.GUEST) {
                     player2 = initializer.getPlayer(GameMode.GUEST);
-                    playerInTurn = player2;
-/**
- * intento de recuperar el attack logger como dior manda..
- */
-                    Message message;
+                   // playerInTurn = player2;
+
+             Message message;
                     try {
                         attackLogger = requester.sendGet("/hitMe");
 
@@ -151,7 +154,7 @@ public class Game {
                     message = (Message) requester.sendGet("/events", String.class);
 
                     if (!attackLogger.getAttackLog().isEmpty()) {
-                        gameManager.updateBoards(playerInTurn, attackLogger.getAttackLog());
+                        gameManager.updateBoards(player2, attackLogger.getAttackLog());
 
                         try{
                             gameManager.getEventLog().show();
@@ -159,35 +162,16 @@ public class Game {
                             System.out.println(ex.getMessage());
                         }
 
-                      /*  EventMessageLog eventLog = Converter.fromJson(message.getMessage(), EventMessageLog.class);
-
-                        try {
-                            message = (Message) requester.sendGet("/events", String.class).getBody();
-                            LinkedTreeMap<String, ArrayList<String>> messages = (LinkedTreeMap<String, ArrayList<String>>) message.getBody();
-                            EventMessageLog eventMessageLog = new EventMessageLog();
-
-                            eventMessageLog.setPlayerLog(messages.get("playerLog")) ;
-                            eventMessageLog.show();
-*/
-/*                            for (String log: eventMessageLog.getPlayerLog()
-                            ) {
-                                System.out.println(log);
-                            }
-
-                        } catch (Exception ex) {
-                            System.out.println("exception en el mensaje vieja");
-                            System.out.println(ex.getMessage());
-                        }*/
 
                         //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
 
-                        if (winValidator.allNinjasKilled(playerInTurn)) {
+                        if (winValidator.allNinjasKilled(player2)) {
                             requester.setIp("127.0.0.1:8001");
-                            String json = Converter.toJson(playerInTurn.getMyNinjas());
+                            String json = Converter.toJson(player2.getMyNinjas());
                             requester.sendPost(json, "/gameState"); //<-- mando mis ninjas para que los actualice
                         }
                     }
-                    display.retrieveBoard(playerInTurn);
+                    display.retrieveBoard(player2);
                     /**
                      * //pido las intenciones al cliente y las valido... salgo de acá con las intenciones para actualizar en el board
                      */
@@ -238,10 +222,6 @@ public class Game {
 
                     requester.sendGet("/ready", Message.class);
 
-/*                    while(!ReadyHandler.isReady()){
-
-                    }
-                    ReadyHandler.setReady(false);*/
 
                 }
                 }
