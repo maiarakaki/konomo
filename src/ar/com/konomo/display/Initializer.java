@@ -7,10 +7,7 @@ import ar.com.konomo.entity.OpError;
 import ar.com.konomo.entity.Player;
 import ar.com.konomo.enums.GameMode;
 import ar.com.konomo.managers.GM;
-import ar.com.konomo.server.Converter;
-import ar.com.konomo.server.Message;
-import ar.com.konomo.server.PlayerCoords;
-import ar.com.konomo.server.Requester;
+import ar.com.konomo.server.*;
 import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.logic.Game;
 
@@ -96,6 +93,7 @@ public class Initializer {
                             e.printStackTrace();
                         }
                         ip = HandshakeHandler.getIp();
+                        requester.setIp(ip+":"+Server.PORT);
 
                     }
                 }
@@ -138,6 +136,7 @@ public class Initializer {
                             e.printStackTrace();
                         }
                     }
+                    requester.setIp(HandshakeHandler.getIp()+":"+Server.PORT);
                 }
 
                 System.out.println("Conexión establecida! Juguemosss! =D");
@@ -146,8 +145,7 @@ public class Initializer {
                 player2 = initializeClient();
 
 
-                //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
-                requester.setIp("127.0.0.1:8001");
+                //requester.setIp("127.0.0.1:8001");
                 String json = Converter.toJson(player.getName());
                 requester.sendPost(json, "/player");
 
@@ -249,9 +247,10 @@ public class Initializer {
         playerCoords.setNinjaList(player.getMyNinjas());
         playerCoords.setCoords(coordinates);
      //   Requester requester = new Requester();
-
-        //requester.setIp(HandshakeHandler.getIp()+":"+"8001");
-        requester.setIp("127.0.0.1:8001");
+/*        if (HandshakeHandler.getIp() != null) {
+            requester.setIp(HandshakeHandler.getIp()+":"+"8000");
+        }*/
+        //requester.setIp("127.0.0.1:8001");
 
         try {
             playerCoords = requester.sendPost(playerCoords, "/validate");

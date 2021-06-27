@@ -13,6 +13,7 @@ public class Server {
     private HttpServer server;
     private GM manager;
     private Initializer initializer;
+    public static int PORT = 8000;
 
     public Server(GM manager, Initializer initializer) {
         this.manager = manager;
@@ -21,7 +22,7 @@ public class Server {
              * cambiar el ip al ip que me da hamachi en el primer argumento de InetSocketAdress
              * sino, poner acá la ipv4 de ipconfig
              */
-            server = HttpServer.create(new InetSocketAddress(8000), 0);
+            server = HttpServer.create(new InetSocketAddress(PORT), 0);
             server.createContext("/connect", new HandshakeHandler());
             server.createContext("/ready", new ReadyHandler());
             server.createContext("/validate", new CoordinateValidationHandler(manager));

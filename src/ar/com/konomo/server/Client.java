@@ -10,6 +10,7 @@ import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.operators.BoardUpdater;
 import ar.com.konomo.operators.EventMessageLog;
 import ar.com.konomo.operators.NinjaPlacer;
+import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
 import ar.com.konomo.validators.WinValidator;
 import com.google.gson.internal.LinkedTreeMap;
@@ -63,7 +64,8 @@ public class Client {
                 //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
 
                 if (winValidator.allNinjasKilled(player)) {
-                    requester.setIp("127.0.0.1:8001");
+                    //requester.setIp(HandshakeHandler.getIp()+":"+"8000");
+                   // requester.setIp("127.0.0.1:8001");
                     String json = Converter.toJson(player.getMyNinjas());
                     requester.sendPost(json, "/gameState"); //<-- mando mis ninjas para que los actualice
                     gameState = GameState.OVER; // <-- por si se me retovó el volatile (?)
