@@ -6,6 +6,7 @@ import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.OpError;
 import ar.com.konomo.entity.Player;
 import ar.com.konomo.enums.GameMode;
+import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.*;
 import ar.com.konomo.server.handlers.HandshakeHandler;
@@ -66,8 +67,8 @@ public class Initializer {
 
                 input = showOptions(GameMode.HOST);
                 System.out.println(input);
+
                 if (Integer.parseInt(input) == 1) {
-                    //  attemptConnection();
                     message = null;
                     while (message == null || message.getCode() != 200) {
                         ip = display.serverCreation("Datos de conexión");
@@ -136,7 +137,11 @@ public class Initializer {
                             e.printStackTrace();
                         }
                     }
-                    requester.setIp(HandshakeHandler.getIp()+":"+Server.PORT);
+                    /**
+                     * OOJO QUE ACÁ TENGO HARDCODEADO EL -1 PARA QUE HAGA LOS REQUESTS AL PUERTO
+                     * 8000 YA QUE EL CLIENTE LO TIENE SETEADO EN 8001
+                     */
+                    requester.setIp(HandshakeHandler.getIp()+":"+(Server.PORT-1));
                 }
 
                 System.out.println("Conexión establecida! Juguemosss! =D");
@@ -158,6 +163,7 @@ public class Initializer {
             }
             break;
             case "X":
+                Game.gameState = GameState.QUIT;
                 return;
         }
 
@@ -175,14 +181,29 @@ public class Initializer {
                 System.out.println("2. Esperar a que se conecte alguien");
 
                 input = scan.nextLine();
+                int userChoice = 0;
+                try {
+                    userChoice = Integer.parseInt(input);
+                }catch (NumberFormatException ex) {
+                    System.out.println(ex.getMessage());
+                    userChoice = 3;
+                }
 
-                while ((Integer.parseInt(input) > 2 || Integer.parseInt(input) < 1)) {
+                while (userChoice > 2 || userChoice < 1) {
                     display.newScreen("Debes seleccionar una opción válida!");
 
                     System.out.println("1. Invitar a alguien");
                     System.out.println("2. Esperar a que se conecte alguien");
 
                     input = scan.nextLine();
+
+                    try {
+                        userChoice = Integer.parseInt(input);
+                    }catch (NumberFormatException ex) {
+                        System.out.println(ex.getMessage());
+                        userChoice = 3;
+                    }
+
                 }
                 break;
             case GUEST:
@@ -191,7 +212,14 @@ public class Initializer {
 
                 input = scan.nextLine();
 
-                while ((Integer.parseInt(input) > 2 || Integer.parseInt(input) < 1)) {
+                try {
+                    userChoice = Integer.parseInt(input);
+                }catch (NumberFormatException ex) {
+                    System.out.println(ex.getMessage());
+                    userChoice = 3;
+                }
+
+                while ((userChoice > 2 || userChoice < 1)) {
                     display.newScreen("Debes seleccionar una opción válida!");
 
                     System.out.println("1. Invitar a alguien");
@@ -287,7 +315,4 @@ public class Initializer {
         return player;
     }
 
-    public Requester getRequester() {
-        return requester;
-    }
 }

@@ -95,6 +95,7 @@ public class Display {
              ) {
             System.out.println(error);
         }
+        errors.getErrors().clear();
     }
 
 

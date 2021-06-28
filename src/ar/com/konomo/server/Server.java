@@ -13,9 +13,10 @@ public class Server {
     private HttpServer server;
     private GM manager;
     private Initializer initializer;
-    public static int PORT = 8000;
+    public static int PORT;
 
-    public Server(GM manager, Initializer initializer) {
+    public Server(GM manager, int port) {
+        this.PORT = 8000+port;
         this.manager = manager;
         try {
             /**

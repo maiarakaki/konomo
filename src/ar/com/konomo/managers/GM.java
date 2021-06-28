@@ -59,6 +59,7 @@ public class GM {
     }
 
     public boolean validate(List<Coordinate> coordinates, Player player) {
+        errors.clear();
 
         boolean allValid = false;
 

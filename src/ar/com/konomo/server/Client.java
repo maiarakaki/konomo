@@ -169,6 +169,7 @@ public class Client {
 
     private Map<Integer, Intention>  getClientIntentions(){
         Map<Integer, Intention>  playerIntentions = display.gamePlay(player);
+
         List<Intention> intentionList = new ArrayList<>();
         for (Map.Entry<Integer,Intention> entry: playerIntentions.entrySet()
         ) {
@@ -179,7 +180,6 @@ public class Client {
 
         try {
             IntentionPack intentionPack = new IntentionPack(intentionList, player.getMyNinjas(),false, player.getEnemyBoard());
-            // String json = Converter.toJson(intentionPack);
             intentionPack = requester.sendPost(intentionPack, "/intentions");
 
             if (intentionPack == null) {
@@ -188,12 +188,12 @@ public class Client {
             }
 
             while (!intentionPack.allGood ) {
-                intentionList.clear();
+                intentionList.clear(); //<-- evaluar si acá debo limpiar la lista...
                 errors = intentionPack.getErrors();
                 playerIntentions = display.ammendIntentions(playerIntentions, errors, player);
 
 
-                intentionList = new ArrayList<>();
+                intentionList = new ArrayList<>(); //mepa q esto está al pedo si lo estoy inicializando arriba
                 for (Map.Entry<Integer,Intention> entry: playerIntentions.entrySet()
                 ) {
                     intentionList.add(entry.getValue());
@@ -206,7 +206,6 @@ public class Client {
                 intentionPack = requester.sendPost(intentionPack, "/intentions");
 
             }
-            intentionList = intentionPack.getIntentions();
 
 
         } catch (Exception ex) {

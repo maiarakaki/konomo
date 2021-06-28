@@ -26,6 +26,12 @@ public class OpError {
         errorss.addAll(opError.getErrors());
     }
 
+    public void clear(){
+        try {
+            errorss.clear();
+        }catch (NullPointerException ex) {
 
+        }
+    }
 
 }

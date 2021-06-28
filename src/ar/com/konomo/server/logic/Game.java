@@ -33,12 +33,12 @@ public class Game {
 
 
 
-    public Game (){
+    public Game (int port){
         gameManager = new GM();
         display = new Display();
         requester = new Requester();
         initializer = new Initializer(display, gameManager, requester);
-        server = new Server(gameManager, initializer);
+        server = new Server(gameManager, port);
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
@@ -65,15 +65,13 @@ public class Game {
             client.play();
 
         } else {
-
-
-        /**
-         * la siguiente linea está así en el server, no decomentar
-         * hasta no haber separado client de server (creo)
-         */
-        //requester.sendGet("/ready", Message.class);
-
-        play();
+            if (mode == GameMode.HOST) {
+                /**
+                 * Inicializado el host, aviso al cliente que estoy listo para jugar
+                 */
+                requester.sendGet("/ready", Message.class);
+                play();
+            }
         }
     }
 
@@ -82,10 +80,8 @@ public class Game {
 
 
     public void play(){
-      //  boolean gameOver = winValidator.winConditionsMet(player1, player2);
         player1 = gameManager.getPlayer1();
         player2 = gameManager.getPlayer2();
-        playerInTurn = player1;
 
         boolean gameOver;
         boolean allGood;
@@ -96,7 +92,6 @@ public class Game {
 
 
             if (mode == GameMode.HOST) {
-                //playerInTurn = player1;
 
                 while(!ReadyHandler.isReady()){
 
@@ -105,8 +100,8 @@ public class Game {
 
 
                 /**
-                 * en teoría el attacklogguer "VIVE" en el manager, en el server... asi que en teoría cuando valido las intenciones del cliente,
-                 * debería ser capaz de analizarlo localmente
+                 * Al inicio de cada turno, evaúo si recibí ataques para actualizar el tablero antes de pedir
+                 * las intenciones al jugador.
                  */
                 attackLogger = gameManager.getAttackLogs();
 
@@ -121,14 +116,15 @@ public class Game {
                     }
                 }
 
-                if (gameState == GameState.ON) { //<- soy el servidor, sé que el juego no terminó
-                    display.retrieveBoard(playerInTurn); //<-le muestro el board al jugador en juego y le pido sus intenciones
+                if (gameState == GameState.ON) {
+                    display.retrieveBoard(player1);
                     playerIntentions = display.gamePlay(player1);
                     allGood = gameManager.validate(playerIntentions, player1);
 
                     while (!allGood) {
                         OpError errors = gameManager.getErrors();
                         playerIntentions = display.ammendIntentions(playerIntentions, errors, player1);
+                        gameManager.getErrors().clear();
                         allGood = gameManager.validate(playerIntentions, player1);
                     }
                     gameManager.updateBoards(player1, playerIntentions, player2.getLocalBoard());
@@ -144,24 +140,21 @@ public class Game {
             }
 
             if (winValidator.winConditionsMet(player1, player2)) gameState = GameState.OVER;
+            requester.sendGet("/gameState", Message.class);
         }
 
 
         System.out.println("GAME OVERRRRR");
         System.out.println("Ganador: " + winValidator.getWinner());
+
+
     }
 
     public void quit(){
-        System.out.println("Cya!");
-       // server.stop();
+
+
+        display.newScreen("Cya! Gracias por jugar!\n\nﾟ･:,｡★＼(^-^ )♪ありがとう♪( ^-^)/★,｡･:･ﾟ");
+        server.stop();
     }
-
-
-
-/*    public static void switchARoo(){
-        if (playerInTurn == player1) {
-            playerInTurn = player2;
-        } else {playerInTurn = player1;}
-    }*/
 
 }

@@ -36,8 +36,9 @@ public class IntentionHandler implements HttpHandler {
         clientIntentionPack.setAllGood(allGood);
 
         String json = Converter.toJson(clientIntentionPack);
-        sendResponse(OK, json, t);
+        manager.getErrors().clear();
 
+        sendResponse(OK, json, t);
     }
 
 
