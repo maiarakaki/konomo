@@ -23,8 +23,13 @@ public class GameStateHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-        List<Shinobi> ninjaList = Converter.fromJson(t.getRequestBody(), List.class);
-        manager.getPlayer2().setMyNinjas(ninjaList);
+        try{
+            List<Shinobi> ninjaList = Converter.fromJson(t.getRequestBody(), List.class);
+            manager.getPlayer2().setMyNinjas(ninjaList);
+
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
 
         sendResponse(OK, "Game Over", t);
         Game.gameState = GameState.OVER;

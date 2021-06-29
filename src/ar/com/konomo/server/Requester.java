@@ -1,13 +1,12 @@
 package ar.com.konomo.server;
 
 import ar.com.konomo.entity.Board;
-import ar.com.konomo.entity.Intention;
-import ar.com.konomo.entity.Shinobi;
+import ar.com.konomo.entity.IntentionPack;
+import ar.com.konomo.entity.Message;
+import ar.com.konomo.entity.PlayerCoords;
 import ar.com.konomo.operators.AttackLogger;
 
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
 
 public class Requester {
     private static String host;
@@ -35,7 +34,7 @@ public class Requester {
         return Delivery.doPost(host + endpoint, object);
     }
 
-    public IntentionPack sendPost( IntentionPack object, String endpoint) {
+    public IntentionPack sendPost(IntentionPack object, String endpoint) {
         return Delivery.doPost(host + endpoint, object);
     }
     public Board sendPost(Board object, String endpoint) {

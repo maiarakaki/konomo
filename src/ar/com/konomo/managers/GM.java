@@ -73,12 +73,15 @@ public class GM {
                     allValid = true;
                 } else {
                     errors.addAll(coordinatePositionValidator.getErrors());
+                    coordinatePositionValidator.getErrors().clear();
                 }
             } else {
                 errors.addAll(coordinateViabilityValidator.getErrors());
+                coordinateViabilityValidator.getErrors().clear();
             }
         } else {
             errors.addAll(coordinateRangeValidator.getErrors());
+            coordinateRangeValidator.getErrors().clear();
         }
         return allValid;
     }
@@ -127,14 +130,17 @@ public class GM {
                     }
                     if (!allValid) {
                         errors.addAll(moveValidator.getError());
+                        moveValidator.getError().clear();
                     }
 
                 } else {
                     errors.addAll(intentionViabilityValidator.getErrors());
+                    intentionViabilityValidator.getErrors().clear();
                     allValid =false;
                 }
             } else {
                 errors.addAll(coordinateRangeValidator.getErrors());
+                coordinateRangeValidator.getErrors().clear();
                 allValid =false;
             }
 
@@ -152,14 +158,6 @@ public class GM {
     }
 
     public void place(List<Shinobi> placeables, Board board) {
-/*        try {
-            for (Placeable item: placeables
-            ) {
-                board.place(item.getRowIndex(), item.getColumnIndex(), item);
-            }
-        }catch (Exception ex) {
-            System.out.println(ex.getMessage() + " place ninjas en el board falló");
-        }*/
         try {
             NinjaPlacer.place(placeables, board);
         } catch (Exception ex) {
@@ -254,9 +252,11 @@ public class GM {
                 allValid = true;
             } else {
                 errors.addAll(coordinateViabilityValidator.getErrors());
+                coordinateViabilityValidator.getErrors().clear();
             }
         } else {
             errors.addAll(coordinateRangeValidator.getErrors());
+            coordinateRangeValidator.getErrors().clear();
         }
         return allValid;
     }
@@ -270,17 +270,17 @@ public class GM {
         return coordinates;
     }
 
-    public boolean validate(List<Intention> playerIntentions) {
+    public boolean validate(List<Intention> clientIntentions) {
 
         boolean allValid = true;
         boolean commanderIsAlive = player2.getMyNinjas().get(2).isAlive();
-        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
+        List <Coordinate> coordinates = getIntentionTargets(clientIntentions);
         try {
             if (coordinateRangeValidator.validate(coordinates)) {
                 // List<Intention> intentionList = playerIntentions;
-                if(intentionViabilityValidator.isViable(playerIntentions)){
+                if(intentionViabilityValidator.isViable(clientIntentions)){
                     int i = 0;
-                    for (Intention intention: playerIntentions
+                    for (Intention intention: clientIntentions
                     ) {
                         if (intention.getAction() == Action.MOVE) {
                             Shinobi ninja = player2.getMyNinjas().get(i);
@@ -295,14 +295,17 @@ public class GM {
 
                     if (!allValid) {
                         errors.addAll(moveValidator.getError());
+                        moveValidator.getError().clear();
                     }
 
                 } else {
                     errors.addAll(intentionViabilityValidator.getErrors());
+                    intentionViabilityValidator.getErrors().clear();
                     allValid =false;
                 }
             } else {
                 errors.addAll(coordinateRangeValidator.getErrors());
+                coordinateRangeValidator.getErrors().clear();
                 allValid =false;
             }
 

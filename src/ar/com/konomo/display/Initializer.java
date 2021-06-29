@@ -2,9 +2,7 @@ package ar.com.konomo.display;
 
 import ar.com.konomo.Factories.NinjaCreator;
 import ar.com.konomo.Factories.PlayerFactory;
-import ar.com.konomo.entity.Coordinate;
-import ar.com.konomo.entity.OpError;
-import ar.com.konomo.entity.Player;
+import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.GameMode;
 import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
@@ -256,12 +254,11 @@ public class Initializer {
 
     public Player getPlayer(GameMode gameMode) {
         switch (gameMode) {
-            case HOST -> {
+            case HOST :
                 return player1;
-            }
-            case GUEST -> {
+
+            case GUEST:
                 return player2;
-            }
         }
         return null;
     }

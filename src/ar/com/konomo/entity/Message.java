@@ -1,4 +1,4 @@
-package ar.com.konomo.server;
+package ar.com.konomo.entity;
 
 public class Message { private int code;
     private  Object body;

@@ -1,7 +1,7 @@
 package ar.com.konomo.server.handlers;
 
 import ar.com.konomo.server.Converter;
-import ar.com.konomo.server.Message;
+import ar.com.konomo.entity.Message;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

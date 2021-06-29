@@ -1,6 +1,9 @@
 package ar.com.konomo.server;
 
 import ar.com.konomo.entity.Board;
+import ar.com.konomo.entity.IntentionPack;
+import ar.com.konomo.entity.Message;
+import ar.com.konomo.entity.PlayerCoords;
 import ar.com.konomo.operators.AttackLogger;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -13,7 +16,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 
-public class Delivery {
+public class Delivery  {
 
     public static final int BAD_REQUEST = 400;
     public static final int NOT_FOUND= 404;
@@ -147,6 +150,8 @@ public class Delivery {
         try {
             HttpContent content = ByteArrayContent.fromString(null, Converter.toJson(body));
             HttpRequest httpRequest = requestFactory.buildPostRequest(new GenericUrl(endpoint), content);
+            httpRequest.setReadTimeout(120000);
+
             httpRequest.getHeaders().setContentType("application/json");
             HttpResponse httpResponse = httpRequest.execute();
             int responseCode = httpResponse.getStatusCode();

@@ -1,8 +1,4 @@
-package ar.com.konomo.server;
-
-import ar.com.konomo.entity.Board;
-import ar.com.konomo.entity.Intention;
-import ar.com.konomo.entity.Shinobi;
+package ar.com.konomo.entity;
 
 import java.util.List;
 import java.util.Map;

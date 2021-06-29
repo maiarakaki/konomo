@@ -1,19 +1,15 @@
 package ar.com.konomo.server.handlers;
 
-import ar.com.konomo.entity.Intention;
 import ar.com.konomo.entity.OpError;
-import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.Converter;
-import ar.com.konomo.server.IntentionPack;
+import ar.com.konomo.entity.IntentionPack;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 public class IntentionHandler implements HttpHandler {
     private GM manager;
@@ -22,6 +18,7 @@ public class IntentionHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange t) throws IOException {
 //mepa q esto puede no ser necesario si el manager permamentemente se está guardando esta info al validar las intenciones...
+        manager.getErrors().clear();
         IntentionPack clientIntentionPack =  Converter.fromJson(t.getRequestBody(), IntentionPack.class);
         //Map<Integer, Intention> intentions = clientIntentionPack.getIntentions();
         //List<Shinobi> clientNinjas = clientIntentionPack.getNinjaList();
@@ -36,7 +33,6 @@ public class IntentionHandler implements HttpHandler {
         clientIntentionPack.setAllGood(allGood);
 
         String json = Converter.toJson(clientIntentionPack);
-        manager.getErrors().clear();
 
         sendResponse(OK, json, t);
     }

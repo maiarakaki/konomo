@@ -8,7 +8,6 @@ import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.server.*;
-import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
 import ar.com.konomo.validators.WinValidator;
 
@@ -139,8 +138,11 @@ public class Game {
                 }
             }
 
-            if (winValidator.winConditionsMet(player1, player2)) gameState = GameState.OVER;
-            requester.sendGet("/gameState", Message.class);
+            if (winValidator.winConditionsMet(player1, player2)) {
+                gameState = GameState.OVER;
+                requester.sendGet("/gameState", Message.class); //FIJARSE QUÉ PASA ACÁ
+            }
+
         }
 
 

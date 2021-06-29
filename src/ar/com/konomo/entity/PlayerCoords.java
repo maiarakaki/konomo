@@ -1,4 +1,4 @@
-package ar.com.konomo.server;
+package ar.com.konomo.entity;
 
 import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.OpError;

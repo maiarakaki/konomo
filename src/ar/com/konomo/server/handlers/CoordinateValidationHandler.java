@@ -2,17 +2,15 @@ package ar.com.konomo.server.handlers;
 
 import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.OpError;
-import ar.com.konomo.entity.Player;
 import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.Converter;
-import ar.com.konomo.server.PlayerCoords;
+import ar.com.konomo.entity.PlayerCoords;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class CoordinateValidationHandler implements HttpHandler {
