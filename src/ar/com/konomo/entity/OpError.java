@@ -34,4 +34,8 @@ public class OpError {
         }
     }
 
+    public boolean isEmpty(){
+        return errorss.isEmpty();
+    }
+
 }

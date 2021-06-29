@@ -107,7 +107,7 @@ public class GM {
     public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
 
         boolean allValid = true;
-        boolean commanderIsAlive = player.getMyNinjas().get(2).isAlive();
+        boolean commanderIsAlive = player.getMyNinjas().get(NINJAS - 1).isAlive();
         List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
         try {
             if (coordinateRangeValidator.validate(coordinates)) {
@@ -270,46 +270,67 @@ public class GM {
         return coordinates;
     }
 
+    private boolean validateRange(List <Coordinate> coordinates){
+        boolean isValid = coordinateRangeValidator.validate(coordinates);
+        if (!isValid) {
+            errors.addAll(coordinateRangeValidator.getErrors());
+            coordinateRangeValidator.getErrors().clear();
+        }
+        return isValid;
+    }
+
+    private boolean validateIntentions(List<Intention> intentions) {
+        boolean isValid = intentionViabilityValidator.isViable(intentions);
+        if (!isValid) {
+            errors.addAll(intentionViabilityValidator.getErrors());
+            intentionViabilityValidator.getErrors().clear();
+        }
+        return isValid;
+    }
+
+    private boolean validateMoves(List<Intention> clientIntentions){
+        boolean commanderIsAlive = player2.getMyNinjas().get(NINJAS -1).isAlive();
+        boolean moveisValid;
+
+        int i = 0;
+        for (Intention intention: clientIntentions
+        ) {
+            if (intention.getAction() == Action.MOVE) {
+                Shinobi ninja = player2.getMyNinjas().get(i);
+                Coordinate coordinate = intention.getCoordinate();
+                moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
+                intention.setValid(moveisValid);
+            }
+            i ++;
+        }
+        return moveValidator.getError().isEmpty();
+    }
+
+
+
     public boolean validate(List<Intention> clientIntentions) {
 
-        boolean allValid = true;
-        boolean commanderIsAlive = player2.getMyNinjas().get(2).isAlive();
+        boolean allValid = false;
         List <Coordinate> coordinates = getIntentionTargets(clientIntentions);
         try {
-            if (coordinateRangeValidator.validate(coordinates)) {
-                // List<Intention> intentionList = playerIntentions;
-                if(intentionViabilityValidator.isViable(clientIntentions)){
-                    int i = 0;
-                    for (Intention intention: clientIntentions
-                    ) {
-                        if (intention.getAction() == Action.MOVE) {
-                            Shinobi ninja = player2.getMyNinjas().get(i);
-                            Coordinate coordinate = intention.getCoordinate();
-                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
-                            if (!moveIsValid){
-                                intention.setValid(false);
-                            }
-                            allValid = false;
-                        }
-                    }
+            /**validateRange:
+             * Checks whether coordinates are logically valid
+             *
+             *  validateIntentions:
+             *  Checks whether Intentions are unique
+             *
+             *  validateMoves:
+             *  Checks whether moves are valid for a given Ninja
+             */
 
-                    if (!allValid) {
-                        errors.addAll(moveValidator.getError());
-                        moveValidator.getError().clear();
-                    }
+            boolean rangeOk = validateRange(coordinates);
+            boolean intentionsUnique = validateIntentions(clientIntentions);
+            boolean movesOk = validateMoves(clientIntentions);
 
-                } else {
-                    errors.addAll(intentionViabilityValidator.getErrors());
-                    intentionViabilityValidator.getErrors().clear();
-                    allValid =false;
-                }
-            } else {
-                errors.addAll(coordinateRangeValidator.getErrors());
-                coordinateRangeValidator.getErrors().clear();
-                allValid =false;
-            }
+            errors.addAll(moveValidator.getError());
+            moveValidator.getError().clear();
 
-
+            allValid = rangeOk && intentionsUnique && movesOk;
 
         }catch (Exception ex) {
             System.out.println(ex.getMessage());
