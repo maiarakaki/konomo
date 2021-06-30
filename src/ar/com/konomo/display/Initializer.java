@@ -117,7 +117,6 @@ public class Initializer {
                         if (message == null) {
                             System.out.println("Falló la conexión!");
                         }
-                        // ver que hago si no me puedo conectar (???)
                         System.out.println("Esperando conexión");
 
                     }
@@ -146,7 +145,6 @@ public class Initializer {
                 player2 = initializeClient();
 
 
-                //requester.setIp("127.0.0.1:8001");
                 String json = Converter.toJson(player.getName());
                 requester.sendPost(json, "/player");
 

@@ -16,7 +16,6 @@ import java.util.*;
 public class Game {
 
     private Server server;
-    private Client client;
     private GM gameManager;
     private Display display;
     private Player player1;

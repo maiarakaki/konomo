@@ -95,6 +95,7 @@ public class Delivery  {
         try {
             HttpContent content = ByteArrayContent.fromString(null, Converter.toJson(body));
             HttpRequest httpRequest = requestFactory.buildPostRequest(new GenericUrl(endpoint), content);
+            httpRequest.setReadTimeout(120000);
             httpRequest.getHeaders().setContentType("application/json");
             HttpResponse httpResponse = httpRequest.execute();
             int responseCode = httpResponse.getStatusCode();
@@ -116,9 +117,9 @@ public class Delivery  {
 
         try {
             HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(endpoint));
+            httpRequest.setReadTimeout(120000);
             HttpResponse httpResponse = httpRequest.execute();
-           // int responseCode = httpResponse.getStatusCode();
-           // Object responseBody =
+
             response = Converter.fromJson(httpResponse.parseAsString(),AttackLogger.class);
             httpResponse.disconnect();
         } catch (IOException e) {
