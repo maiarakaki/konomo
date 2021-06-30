@@ -82,7 +82,7 @@ public class Display {
 
         background.setBackground(new String[10 + myBoard.screenBoard.length][myBoard.screenBoard.length + enemyBoard.screenBoard.length +4]);
         try {
-            background.fillBackground("Juguemos " + player.getName(), myBoard, enemyBoard, 4, 10);
+            background.fillBackground(player.getName(), myBoard, enemyBoard, 4, 10);
             background.showBackground();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

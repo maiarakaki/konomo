@@ -7,6 +7,7 @@ import ar.com.konomo.entity.PlayerCoords;
 import ar.com.konomo.operators.AttackLogger;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -70,8 +71,12 @@ public class Delivery  {
             httpRequest.getHeaders().setContentType("application/json");
             HttpResponse httpResponse = httpRequest.execute();
             int responseCode = httpResponse.getStatusCode();
-            Object responseBody = Converter.fromJson(httpResponse.parseAsString(), responseType);
-            response = new Message(responseCode, "", responseBody);// TODO
+            try {
+                Object responseBody = Converter.fromJson(httpResponse.parseAsString(), responseType);
+                response = new Message(responseCode, "", responseBody);// TODO
+            } catch (JsonSyntaxException ex) {
+
+            }
             httpResponse.disconnect();
         } catch (HttpResponseException e) {
 //            System.out.println(e.getMessage());

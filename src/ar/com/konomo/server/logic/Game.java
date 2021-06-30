@@ -16,7 +16,6 @@ import java.util.*;
 public class Game {
 
     private Server server;
-    private Client client;
     private GM gameManager;
     private Display display;
     private static Player player1;
@@ -28,7 +27,6 @@ public class Game {
     private Requester requester;
 
     public static volatile GameState gameState = GameState.ON;
-    public static volatile Player playerInTurn;
 
 
 
@@ -133,8 +131,6 @@ public class Game {
                     display.retrieveBoard(player1);
 
 
-
-                    System.out.println("==============FIN DE TURNO=============");
                     requester.sendGet("/ready", Message.class);
 
                 }
@@ -142,20 +138,22 @@ public class Game {
 
             if (winValidator.winConditionsMet(player1, player2)) {
                 gameState = GameState.OVER;
-                requester.sendGet("/gameState", Message.class); //FIJARSE QUÉ PASA ACÁ
+                try {
+                    requester.sendGet("/gameState", Message.class);
+                } catch (IllegalStateException  ex ) {
+                    ex.printStackTrace();
+                }
             }
 
         }
 
 
-        System.out.println("GAME OVERRRRR");
-        System.out.println("Ganador: " + winValidator.getWinner());
+        display.newScreen ("GAME OVER\n Ganador: " + winValidator.getWinner());
 
 
     }
 
     public void quit(){
-
 
         display.newScreen("Cya! Gracias por jugar!\n\nﾟ･:,｡★＼(^-^ )♪ありがとう♪( ^-^)/★,｡･:･ﾟ");
         server.stop();

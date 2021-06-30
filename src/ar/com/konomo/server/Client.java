@@ -9,6 +9,7 @@ import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.operators.BoardUpdater;
 import ar.com.konomo.operators.EventMessageLog;
 import ar.com.konomo.operators.NinjaPlacer;
+import ar.com.konomo.server.handlers.GameStateHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
 import ar.com.konomo.validators.WinValidator;
 import com.google.gson.internal.LinkedTreeMap;
@@ -28,99 +29,100 @@ public class Client {
     private BoardUpdater boardUpdater = new BoardUpdater();
     private EventMessageLog eventMessageLog = new EventMessageLog();
 
-    public static volatile GameState gameState = GameState.ON;
-
 
 
     public void play(){
-        while(gameState == GameState.ON) {
+        while(GameStateHandler.getGameState() == GameState.ON) {
 
             while (!ReadyHandler.isReady()) ;
             ReadyHandler.setReady(false);
-            Message message;
-            try {
-                attackLogger = requester.sendGet("/hitMe");
 
-            } catch (Exception ex) {
-                System.out.println("exception en el attacklogger vieja");
-                System.out.println(ex.getMessage());
-            }
+            statusUpdate();
 
-            message = (Message) requester.sendGet("/events", String.class);
+            if (GameStateHandler.getGameState() == GameState.ON){
+                display.retrieveBoard(player);
 
-            if (!attackLogger.getAttackLog().isEmpty()) {
-                updateBoard(attackLogger.getAttackLog());
-                attackLogger.getAttackLog().clear();
-
+                playerIntentions = getClientIntentions();
 
                 try{
-                    boardUpdater.getEventLog().show();
-                    //gameManager.getEventLog().show();
-                }catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    player.setEnemyBoard(sendClientIntentions(playerIntentions));
+                    moveNinjas();
+                    display.retrieveBoard(player);
+                    showResults();
+                }
+                catch (Exception ex){
+                    System.out.println("rompimo todo");
                 }
 
 
-                //si me mataron todos los ninjas, hago un post para cambiar la variable de ON a OVER
+                requester.sendGet("/ready", Message.class);
+                while (!ReadyHandler.isReady()) ;
 
-                if (winValidator.allNinjasKilled(player)) {
-                    //requester.setIp(HandshakeHandler.getIp()+":"+"8000");
-                   // requester.setIp("127.0.0.1:8001");
-                    String json = Converter.toJson(player.getMyNinjas());
-                    requester.sendPost(json, "/gameState"); //<-- mando mis ninjas para que los actualice
-                    gameState = GameState.OVER; // <-- por si se me retovó el volatile (?)
-                }
-            }
-            display.retrieveBoard(player);
-            /**
-             * //pido las intenciones al cliente y las valido... salgo de acá con las intenciones para actualizar en el board
-             */
-            playerIntentions = getClientIntentions();
-
-            try{
-                player.setEnemyBoard(sendClientIntentions(playerIntentions));
-            }
-            catch (Exception ex){
-                System.out.println("rompimo todo");
             }
 
-
-            List<Shinobi> movedNinjas = new ArrayList<>();
-            for (Map.Entry<Integer, Intention> intention : playerIntentions.entrySet()
-            ) {
-                Shinobi myNinja = player.getMyNinjas().get(intention.getKey());
-                if (intention.getValue().getAction() == Action.MOVE) {
-                    movedNinjas.add(myNinja);
-                    boardUpdater.update(player.getLocalBoard(),intention.getValue(), myNinja);
-                    myNinja.setLastActionTaken(Action.MOVE);
-                }
-                NinjaPlacer.place(movedNinjas, player.getLocalBoard());
-            }
-            try {
-                message = (Message) requester.sendGet("/events", String.class).getBody();
-                LinkedTreeMap<String, ArrayList<String>> messages = (LinkedTreeMap<String, ArrayList<String>>) message.getBody();
-                EventMessageLog eventMessageLog = new EventMessageLog();
-
-                eventMessageLog.setPlayerLog(messages.get("playerLog")) ;
-
-                for (String log: eventMessageLog.getPlayerLog()
-                ) {
-                    System.out.println(log);
-                }
-
-            } catch (Exception ex) {
-                System.out.println("exception en el mensaje vieja");
-                System.out.println(ex.getMessage());
-            }
-            display.retrieveBoard(player);
-
-
-            requester.sendGet("/ready", Message.class);
+        }
+        display.newScreen ("GAME OVER");
+        if (winValidator.allNinjasKilled(player)) {
+            System.out.println("Perdiste D=");
+        } else {
+            System.out.println("Ganaste!");
         }
 
     }
 
+    private void statusUpdate(){
+        try {
+            attackLogger = requester.sendGet("/hitMe");
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        if (!attackLogger.getAttackLog().isEmpty()) {
+            updateBoard(attackLogger.getAttackLog());
+            attackLogger.getAttackLog().clear();
 
+            boardUpdater.getEventLog().show();
+
+
+            if (winValidator.allNinjasKilled(player)) {
+                GameStateHandler.setGameState(GameState.OVER);
+            }
+        }
+    }
+
+    private void showResults(){
+        try {
+            Message message = (Message) requester.sendGet("/events", String.class).getBody();
+            LinkedTreeMap<String, ArrayList<String>> messages = (LinkedTreeMap<String, ArrayList<String>>) message.getBody();
+            EventMessageLog eventMessageLog = new EventMessageLog();
+
+            eventMessageLog.setPlayerLog(messages.get("playerLog")) ;
+
+            for (String log: eventMessageLog.getPlayerLog()
+            ) {
+                System.out.println(log);
+            }
+          //  display.retrieveBoard(player);  VER SI NO TENIA Q DECOMENTAR ESTE
+
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void moveNinjas(){
+        List<Shinobi> movedNinjas = new ArrayList<>();
+        for (Map.Entry<Integer, Intention> intention : playerIntentions.entrySet()
+        ) {
+            Shinobi myNinja = player.getMyNinjas().get(intention.getKey());
+            if (intention.getValue().getAction() == Action.MOVE) {
+                movedNinjas.add(myNinja);
+                boardUpdater.update(player.getLocalBoard(),intention.getValue(), myNinja);
+                myNinja.setLastActionTaken(Action.MOVE);
+            }
+            NinjaPlacer.place(movedNinjas, player.getLocalBoard());
+        }
+
+    }
     public Player getPlayer() {
         return player;
     }
@@ -169,7 +171,6 @@ public class Client {
 
     private Map<Integer, Intention>  getClientIntentions(){
         Map<Integer, Intention>  playerIntentions = display.gamePlay(player);
-
         List<Intention> intentionList = new ArrayList<>();
         for (Map.Entry<Integer,Intention> entry: playerIntentions.entrySet()
         ) {
@@ -225,10 +226,6 @@ public class Client {
 
     public void setDisplay(Display display) {
         this.display = display;
-    }
-
-    public WinValidator getWinValidator() {
-        return winValidator;
     }
 
     public void setWinValidator(WinValidator winValidator) {

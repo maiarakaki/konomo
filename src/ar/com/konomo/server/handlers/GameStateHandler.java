@@ -1,5 +1,6 @@
 package ar.com.konomo.server.handlers;
 
+import ar.com.konomo.entity.Message;
 import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
@@ -15,24 +16,15 @@ import java.util.List;
 
 public class GameStateHandler implements HttpHandler {
     private static final int OK = 200;
-    private GM manager;
+    private static GameState gameState = GameState.ON;
 
-    public GameStateHandler(GM manager) {
-        this.manager = manager;
-    }
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-        try{
-            List<Shinobi> ninjaList = Converter.fromJson(t.getRequestBody(), List.class);
-            manager.getPlayer2().setMyNinjas(ninjaList);
 
-        }catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        sendResponse(OK, "Game Over", t);
-        Game.gameState = GameState.OVER;
+        gameState = GameState.OVER;
+        ReadyHandler.setReady(true);
+        sendResponse(OK, "", t);
     }
 
 
@@ -49,4 +41,11 @@ public class GameStateHandler implements HttpHandler {
 
     }
 
+    public static GameState getGameState() {
+        return gameState;
+    }
+
+    public static void setGameState(GameState gameState) {
+        GameStateHandler.gameState = gameState;
+    }
 }

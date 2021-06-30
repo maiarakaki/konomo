@@ -13,6 +13,9 @@ public class Main {
 
         while (Game.gameState != GameState.QUIT) {
             game.start();
+
+            System.gc();
+            game = new Game(Integer.parseInt(args[0]));
         }
         game.quit();
     }

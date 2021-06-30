@@ -27,10 +27,8 @@ public class Gameplay {
         CoordinateIn userCoordinate = new CoordinateIn();
         Map<Integer, Intention> intentionSet = new HashMap<>();
 
-        //List <Intention> intentions = new ArrayList<>();
         int i = 0;
-        //int userSelection;
-        //String userInput;
+
         while (i < NINJAS)
         {
             Shinobi ninja = player.getMyNinjas().get(i);
@@ -45,8 +43,6 @@ public class Gameplay {
                 userSelection = 1;
             }
 
-            //System.out.println(Action.values()[userSelection-1]);
-           //scanner.nextLine();
 
             askforCoord(userSelection);
 
