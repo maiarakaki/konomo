@@ -104,7 +104,7 @@ public class BoardUpdater {
         try {
             board[coordinate.getRow()][coordinate.getColumn()-10] = value;
         }catch (Exception ex) {
-            System.out.println(ex.getMessage() + "jksldañjfklds error escribiendo en el board imaginariooo");
+            System.out.println(ex.getMessage());
         }
     }
 

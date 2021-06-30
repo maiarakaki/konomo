@@ -101,9 +101,6 @@ public class Client {
             ) {
                 System.out.println(log);
             }
-          //  display.retrieveBoard(player);  VER SI NO TENIA Q DECOMENTAR ESTE
-
-
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -189,12 +186,12 @@ public class Client {
             }
 
             while (!intentionPack.allGood ) {
-                intentionList.clear(); //<-- evaluar si acá debo limpiar la lista...
+                intentionList.clear();
                 errors = intentionPack.getErrors();
                 playerIntentions = display.ammendIntentions(playerIntentions, errors, player);
 
 
-                intentionList = new ArrayList<>(); //mepa q esto está al pedo si lo estoy inicializando arriba
+                intentionList = new ArrayList<>();
                 for (Map.Entry<Integer,Intention> entry: playerIntentions.entrySet()
                 ) {
                     intentionList.add(entry.getValue());

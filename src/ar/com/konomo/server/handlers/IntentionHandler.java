@@ -17,14 +17,8 @@ public class IntentionHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-//mepa q esto puede no ser necesario si el manager permamentemente se está guardando esta info al validar las intenciones...
         manager.getErrors().clear();
         IntentionPack clientIntentionPack =  Converter.fromJson(t.getRequestBody(), IntentionPack.class);
-        //Map<Integer, Intention> intentions = clientIntentionPack.getIntentions();
-        //List<Shinobi> clientNinjas = clientIntentionPack.getNinjaList();
-
-
-
         boolean allGood = manager.validate(clientIntentionPack.getIntentions());
 
         OpError errors = manager.getErrors();

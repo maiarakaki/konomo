@@ -229,9 +229,6 @@ public class Initializer {
         return input;
     }
 
-    public String getIp() {
-        return ip;
-    }
 
     public Player initializePlayer() {
 
