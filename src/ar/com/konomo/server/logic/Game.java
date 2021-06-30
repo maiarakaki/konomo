@@ -160,7 +160,11 @@ public class Game {
     public void quit(){
 
         display.newScreen("Cya! Gracias por jugar!\n\nﾟ･:,｡★＼(^-^ )♪ありがとう♪( ^-^)/★,｡･:･ﾟ");
-        server.stop();
+        try {
+            server.stop();
+        } catch (NullPointerException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
 }
