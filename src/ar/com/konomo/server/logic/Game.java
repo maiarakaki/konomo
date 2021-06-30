@@ -107,6 +107,7 @@ public class Game {
 
                 if (!attackLogger.getAttackLog().isEmpty()) {
                     gameManager.updateBoards(player1, attackLogger.getAttackLog());
+                    attackLogger.getAttackLog().clear();
                     gameManager.getEventLog().show();
                     gameOver = winValidator.winConditionsMet(player1, player2);
 
@@ -128,6 +129,7 @@ public class Game {
                     }
                     gameManager.updateBoards(player1, playerIntentions, player2.getLocalBoard());
                     gameManager.getEventLog().show();
+                    gameManager.updateBoards(player2, attackLogger.getAttackLog());
                     display.retrieveBoard(player1);
 
 

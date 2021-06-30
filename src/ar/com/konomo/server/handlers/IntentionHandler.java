@@ -26,6 +26,7 @@ public class IntentionHandler implements HttpHandler {
 
 
         boolean allGood = manager.validate(clientIntentionPack.getIntentions());
+
         OpError errors = manager.getErrors();
 
 
@@ -40,20 +41,11 @@ public class IntentionHandler implements HttpHandler {
 
     public void sendResponse(int statusCode, String response, HttpExchange exchange) {
         try {
-            /*exchange.sendResponseHeaders(statusCode, response.length());
-            OutputStream outStream = exchange.getResponseBody();
-            outStream.write(response.getBytes(StandardCharsets.UTF_8));*/
-/*            byte[] bs = response.getBytes("UTF-8");
-            exchange.sendResponseHeaders(statusCode, bs.length);
-            OutputStream os = exchange.getResponseBody();*/
-/*            outStream.flush();
-            outStream.close();*/
+
             exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
             OutputStream outStream = exchange.getResponseBody();
             outStream.write(response.getBytes(StandardCharsets.UTF_8));
             outStream.close();
-
-
 
 
         } catch (Exception e) {

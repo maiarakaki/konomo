@@ -5,7 +5,7 @@ import ar.com.konomo.enums.Action;
 import ar.com.konomo.operators.CoordinateBuilder;
 
 public class MoveValidator {
-    private final OpError opError;
+    private OpError opError;
     private static final int DEAD_COMMANDER = 8;
     private static final String DEAD_COMMANDER_MSG = "Tu comandante ha muerto, los ninjas no pueden moverse!";
     private static final int ALREADY_MOVED = 9;
@@ -44,6 +44,9 @@ public class MoveValidator {
     }
 
     public OpError getError() {
+        if (opError == null) {
+            opError = new OpError();
+        }
         return opError;
     }
 

@@ -50,6 +50,8 @@ public class Client {
 
             if (!attackLogger.getAttackLog().isEmpty()) {
                 updateBoard(attackLogger.getAttackLog());
+                attackLogger.getAttackLog().clear();
+
 
                 try{
                     boardUpdater.getEventLog().show();

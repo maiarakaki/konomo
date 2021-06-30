@@ -226,7 +226,6 @@ public class GM {
 
         }
         eventMessageLog = boardUpdater.getEventLog();
-        attackList.clear();
     }
 
     public EventMessageLog getEventLog() {
@@ -261,7 +260,7 @@ public class GM {
         return allValid;
     }
 
-    public List <Coordinate> getIntentionTargets(List<Intention> clientIntentions) {
+    private List <Coordinate> getIntentionTargets(List<Intention> clientIntentions) {
         List <Coordinate> coordinates = new ArrayList<>();
         for (Intention intention: clientIntentions
         ) {
@@ -300,12 +299,13 @@ public class GM {
                 Coordinate coordinate = intention.getCoordinate();
                 moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
                 intention.setValid(moveisValid);
+            } else {
+                intention.setValid(true);
             }
             i ++;
         }
-        return moveValidator.getError().isEmpty();
+    return moveValidator.getError().getErrors().isEmpty();
     }
-
 
 
     public boolean validate(List<Intention> clientIntentions) {

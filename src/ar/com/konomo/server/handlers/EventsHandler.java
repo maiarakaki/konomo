@@ -18,15 +18,9 @@ public class EventsHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-      /*  EventMessageLog eventLog = manager.getEventLog();
-        String json = Converter.toJson(eventLog);
 
-        // Message message = new Message(200, json, null);
-
-        sendResponse(OK, json, t);
-*/
         EventMessageLog eventLog = manager.getEventLog();
-        //String json = Converter.toJson(eventLog);
+
 
         Message message = new Message(200, "", eventLog);
         String json = Converter.toJson(message);
@@ -41,10 +35,9 @@ public class EventsHandler implements HttpHandler {
 
     public void sendResponse(int statusCode, String response, HttpExchange exchange) {
         try {
-            exchange.sendResponseHeaders(statusCode, response.length());
+            exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
             OutputStream outStream = exchange.getResponseBody();
             outStream.write(response.getBytes(StandardCharsets.UTF_8));
-            outStream.flush();
             outStream.close();
         } catch (IOException e) {
             e.printStackTrace();

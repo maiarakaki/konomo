@@ -45,12 +45,12 @@ public class BoardUpdater {
         Coordinate coord = new Coordinate(ninja.getColumnIndex() +10, ninja.getRowIndex());
         if (ninja.getStamina() <= 0) {
             ninja.setAlive(false);
-            ninja.setNinjaType(NinjaType.FIAMBRENIN);
             if (ninja.getNinjaType() == NinjaType.JOUNIN) {
                 logEvent(Event.COMMANDER_GOT_KILLED, coord);
             } else {
                 logEvent(Event.GOT_KILLED, coord);
             }
+            ninja.setNinjaType(NinjaType.FIAMBRENIN);
         } else {
             logEvent(Event.COMMANDER_GOT_HIT, coord);
         }
