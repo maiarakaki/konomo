@@ -5,6 +5,7 @@ import ar.com.konomo.display.Initializer;
 import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.GameMode;
 import ar.com.konomo.enums.GameState;
+import ar.com.konomo.errorHandling.ServerRunningException;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.server.*;
@@ -16,10 +17,11 @@ import java.util.*;
 public class Game {
 
     private Server server;
+    private Client client;
     private GM gameManager;
     private Display display;
-    private static Player player1;
-    private static Player player2;
+    private Player player1;
+    private Player player2;
     private WinValidator winValidator;
     private List<Coordinate> coordinates;
     public static GameMode mode;
@@ -35,7 +37,11 @@ public class Game {
         display = new Display();
         requester = new Requester();
         initializer = new Initializer(display, gameManager, requester);
-        server = new Server(gameManager, port);
+        try {
+            server = new Server(gameManager, port);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
@@ -47,9 +53,8 @@ public class Game {
 
     public void start(){
         gameManager.createGame();
+        gameState = GameState.ON;
         initializer.initiate();
-        //requester.setIp(HandshakeHandler.getIp()+":"+"8000");
-        //requester.setIp("127.0.0.1:8001");
 
         mode = initializer.getGameMode();
 
