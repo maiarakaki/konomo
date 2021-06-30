@@ -48,6 +48,11 @@ public class Server {
 
 
     public void stop() {
-        server.stop(0);
+        try{
+            server.stop(0);
+        } catch (NullPointerException ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 }
