@@ -1,8 +1,6 @@
 package ar.com.konomo.display;
 
 
-import ar.com.konomo.entity.Board;
-
 public class BoardMaker {
 
     static int BORDER_PADDING = 2;
@@ -10,13 +8,9 @@ public class BoardMaker {
     static int BOARD_SIZE = 5;
     public static String[] yAxisLabels= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"};
 
-/*    public String[][] getBoard() {
-        return screenBoard;
-    }*/
 
     public ScreenBoard create(Borders borderSets) {
         ScreenBoard screenBoard = new ScreenBoard();
-                //new String[BOARD_SIZE * BORDER_PADDING + OFFSET][BOARD_SIZE  * BORDER_PADDING+ OFFSET];
 
         int k = 0;
         for (int i = 0; i < screenBoard.getScreenBoard().length; i++) {

@@ -5,7 +5,6 @@ import ar.com.konomo.display.Initializer;
 import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.GameMode;
 import ar.com.konomo.enums.GameState;
-import ar.com.konomo.errorHandling.ServerRunningException;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.server.*;

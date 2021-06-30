@@ -50,8 +50,6 @@ public class Initializer {
 
     public void initiate() {
 
-       // requester = new Requester();
-
         display.titleScreen();
         String userOption = display.showOptions().toUpperCase();
         String input;
@@ -271,11 +269,6 @@ public class Initializer {
         List<Coordinate> coordinates= (display.playerSettings(player));
         playerCoords.setNinjaList(player.getMyNinjas());
         playerCoords.setCoords(coordinates);
-     //   Requester requester = new Requester();
-/*        if (HandshakeHandler.getIp() != null) {
-            requester.setIp(HandshakeHandler.getIp()+":"+"8000");
-        }*/
-        //requester.setIp("127.0.0.1:8001");
 
         try {
             playerCoords = requester.sendPost(playerCoords, "/validate");

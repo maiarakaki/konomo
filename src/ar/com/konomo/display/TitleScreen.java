@@ -38,7 +38,7 @@ public class TitleScreen {
         }
     }
 
-    void Read()
+    private void Read()
     {
         scan.nextLine();
     }
