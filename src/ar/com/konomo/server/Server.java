@@ -38,7 +38,7 @@ public class Server {
                 server.setExecutor(null); // creates a default executor
                 server.start();
             } catch (BindException exception) {
-                throw new ServerRunningException("Server was already running!");
+                throw new ServerRunningException("Server is still running!");
             }
         } catch (IOException e) {
             e.printStackTrace();
