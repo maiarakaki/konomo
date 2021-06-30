@@ -18,8 +18,8 @@ import static ar.com.konomo.Main.NINJAS;
 
 public class GM {
     private Factory factory;
-    private Player player1 = null;
-    private Player player2 = null;
+    private Player player1;
+    private Player player2;
     private CoordinateRangeValidator coordinateRangeValidator;
     private CoordinateViabilityValidator coordinateViabilityValidator;
     private CoordinatePositionValidator coordinatePositionValidator;

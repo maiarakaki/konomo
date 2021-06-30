@@ -1,6 +1,5 @@
 package ar.com.konomo.server;
 
-import ar.com.konomo.entity.Player;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

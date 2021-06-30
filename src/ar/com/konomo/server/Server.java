@@ -2,6 +2,7 @@ package ar.com.konomo.server;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import ar.com.konomo.errorHandling.ServerRunningException;
@@ -24,7 +25,7 @@ public class Server {
              */
 
             try {
-                server = HttpServer.create(new InetSocketAddress(PORT), 0);
+                server = HttpServer.create(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), PORT), 0);
                 server.createContext("/connect", new HandshakeHandler());
                 server.createContext("/ready", new ReadyHandler());
                 server.createContext("/validate", new CoordinateValidationHandler(manager));
