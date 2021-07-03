@@ -16,7 +16,6 @@ public class Gameplay {
     private CoordinateBuilder coordBuilder;
     private Scanner scanner;
     private String userInput;
-    private int userSelection;
 
     public Gameplay (Scanner scanner, CoordinateFormalValidator coordinateFormalValidator, CoordinateBuilder coordinateBuilder){
         this.scanner =  scanner;
@@ -39,31 +38,9 @@ public class Gameplay {
                 String userAction = scanner.nextLine();
                 userAction= askforCoord(userAction, i, ninja );
 
-/*
-                try{
-                    userSelection = Integer.parseInt(userAction);
-                } catch (NumberFormatException ex){
-                    System.out.println("Ocurrió una excepción al intentar parsear tus intenciones. ");
-                }
-
-*/
 
                 userInput = scanner.nextLine();
 
-              /*  userInput= scanner.nextLine();
-
-
-                askforCoord(userInput, i, ninja);
-
-                try {
-                    userSelection = Integer.parseInt(userInput);
-                } catch (NumberFormatException ex) {
-                    System.out.println("Ocurrió una excepción al intentar parsear tus intenciones. ");
-                }
-
-                userInput = scanner.nextLine();
-
-*/
                 boolean isValid = coordinateFormalValidator.validate(userInput, userCoordinate);
 
 
@@ -136,15 +113,6 @@ public class Gameplay {
 
                 String userAction= scanner.nextLine();
                 userAction= askforCoord(userAction, set.getKey(), ninjas.get(set.getKey()) );
-
-
-
-/*                try{
-                    userSelection = Integer.parseInt(userAction);
-                } catch (NumberFormatException ex){
-                    System.out.println("Ocurrió una excepción al intentar parsear tus intenciones.");
-
-                }*/
 
 
                 userInput = scanner.nextLine();
