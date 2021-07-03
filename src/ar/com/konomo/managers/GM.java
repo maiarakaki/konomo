@@ -58,7 +58,7 @@ public class GM {
         this.player2 = player2;
     }
 
-    public boolean validate(List<Coordinate> coordinates, Player player) {
+    public boolean coordinatesAreValid(List<Coordinate> coordinates, Player player) {
         errors.clear();
 
         boolean allValid = false;
@@ -105,8 +105,10 @@ public class GM {
     }
 
     public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
+        List <Intention> intentions = getIntentionList(playerIntentions);
+        return validate (intentions, player);
 
-        boolean allValid = true;
+      /*  boolean allValid = true;
         boolean commanderIsAlive = player.getMyNinjas().get(NINJAS - 1).isAlive();
         List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
         try {
@@ -151,6 +153,8 @@ public class GM {
         }
 
         return allValid;
+
+       */
     }
 
     public OpError getErrors(){
@@ -287,17 +291,18 @@ public class GM {
         return isValid;
     }
 
-    private boolean validateMoves(List<Intention> clientIntentions){
-        boolean commanderIsAlive = player2.getMyNinjas().get(NINJAS -1).isAlive();
+    private boolean validateMoves(List<Intention> clientIntentions, Player player){
+        Player playerInTurn = player;
+        boolean commanderIsAlive = player.getMyNinjas().get(NINJAS -1).isAlive();
         boolean moveisValid;
 
         int i = 0;
         for (Intention intention: clientIntentions
         ) {
             if (intention.getAction() == Action.MOVE) {
-                Shinobi ninja = player2.getMyNinjas().get(i);
+                Shinobi ninja = playerInTurn.getMyNinjas().get(i);
                 Coordinate coordinate = intention.getCoordinate();
-                moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player2.getLocalBoard());
+                moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, playerInTurn.getLocalBoard());
                 intention.setValid(moveisValid);
             } else {
                 intention.setValid(true);
@@ -308,7 +313,7 @@ public class GM {
     }
 
 
-    public boolean validate(List<Intention> clientIntentions) {
+    public boolean validate(List<Intention> clientIntentions, Player player) {
 
         boolean allValid = false;
         List <Coordinate> coordinates = getIntentionTargets(clientIntentions);
@@ -325,7 +330,7 @@ public class GM {
 
             boolean rangeOk = validateRange(coordinates);
             boolean intentionsUnique = validateIntentions(clientIntentions);
-            boolean movesOk = validateMoves(clientIntentions);
+            boolean movesOk = validateMoves(clientIntentions, player);
 
             errors.addAll(moveValidator.getError());
             moveValidator.getError().clear();

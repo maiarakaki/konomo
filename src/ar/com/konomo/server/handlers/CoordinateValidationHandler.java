@@ -28,7 +28,7 @@ public class CoordinateValidationHandler implements HttpHandler {
         List <Shinobi> ninjaList = playerCoords.getNinjaList();
 
         //boolean allGood = manager.validate(coordinateList, ninjaList);
-        boolean allGood = manager.validate(coordinateList, manager.getPlayer2());
+        boolean allGood = manager.coordinatesAreValid(coordinateList, manager.getPlayer2());
         errors = manager.getErrors();
         playerCoords.setNinjaList(manager.getPlayer2().getMyNinjas());
         playerCoords.setErrors(errors);

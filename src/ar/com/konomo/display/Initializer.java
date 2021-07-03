@@ -243,7 +243,7 @@ public class Initializer {
     public Player initializePlayer() {
 
         List<Coordinate> coordinates = (display.playerSettings(player));
-        boolean allGood = gameManager.validate(coordinates, player);
+        boolean allGood = gameManager.coordinatesAreValid(coordinates, player);
         if (allGood) {
             display.retrieveBoard(player);
         } else {
@@ -251,7 +251,7 @@ public class Initializer {
                 OpError errors = gameManager.getErrors();
                 coordinates = display.ammendCoordinates(coordinates, errors);
                 //
-                allGood = gameManager.validate(coordinates, player);
+                allGood = gameManager.coordinatesAreValid(coordinates, player);
             }
         }
         return player;

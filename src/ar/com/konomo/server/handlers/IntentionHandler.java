@@ -25,7 +25,7 @@ public class IntentionHandler implements HttpHandler {
 
 
 
-        boolean allGood = manager.validate(clientIntentionPack.getIntentions());
+        boolean allGood = manager.validate(clientIntentionPack.getIntentions(), manager.getPlayer2());
 
         OpError errors = manager.getErrors();
 

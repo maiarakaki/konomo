@@ -7,7 +7,9 @@ public class HomeScreen {
     public String showOptions(){
         String userInput = "";
         try {
-            System.out.printf("%s", "N – Nueva partida\nC – Conectarse a una partida\nX – Salir\n");
+            System.out.println("N – Nueva partida");
+            System.out.println("C – Conectarse a una partida");
+            System.out.println("X – Salir");
             userInput = scan.nextLine();
         }catch (Exception ex) {
             System.out.println("Could not retrieve user input");
