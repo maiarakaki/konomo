@@ -12,8 +12,8 @@ import ar.com.konomo.validators.*;
 
 import java.util.*;
 
-import static ar.com.konomo.Main.BOARD_SIZE;
-import static ar.com.konomo.Main.NINJAS;
+import static ar.com.konomo.constants.Constants.BOARD_SIZE;
+import static ar.com.konomo.constants.Constants.NINJAS;
 
 
 public class GM {

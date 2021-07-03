@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static ar.com.konomo.Main.NINJAS;
+import static ar.com.konomo.constants.Constants.NINJAS;
 
 public class NinjaPlacing {
     private Scanner scan = new Scanner(System.in);

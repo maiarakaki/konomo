@@ -8,6 +8,7 @@ import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.server.*;
+import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
 import ar.com.konomo.validators.WinValidator;
 
@@ -46,10 +47,8 @@ public class Game {
 
 
     public void start(){
-        gameManager.createGame();
+        //gameManager.createGame();
         initializer.initiate();
-        //requester.setIp(HandshakeHandler.getIp()+":"+"8000");
-        //requester.setIp("127.0.0.1:8001");
 
         mode = initializer.getGameMode();
 
@@ -156,7 +155,15 @@ public class Game {
     public void quit(){
 
         display.newScreen("Cya! Gracias por jugar!\n\nﾟ･:,｡★＼(^-^ )♪ありがとう♪( ^-^)/★,｡･:･ﾟ");
+
+    }
+
+    public Game restart(int arg){
+        ReadyHandler.setReady(false);
+        HandshakeHandler.setConnected(false);
         server.stop();
+        gameState= GameState.ON;
+        return new Game(arg);
     }
 
 }

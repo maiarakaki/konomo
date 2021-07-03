@@ -13,8 +13,9 @@ import ar.com.konomo.server.logic.Game;
 import java.util.List;
 import java.util.Scanner;
 
-import static ar.com.konomo.Main.BOARD_SIZE;
-import static ar.com.konomo.Main.NINJAS;
+import static ar.com.konomo.constants.Constants.BOARD_SIZE;
+import static ar.com.konomo.constants.Constants.NINJAS;
+
 
 public class Initializer {
     private GameMode gameMode;
@@ -44,13 +45,15 @@ public class Initializer {
         NinjaCreator ninjaCreator = new NinjaCreator();
         PlayerFactory playerFactory = new PlayerFactory(ninjaCreator);
         scan = new Scanner(System.in);
+        /**
+         * hay que borrar este player????
+         */
         player = playerFactory.create(NINJAS, BOARD_SIZE);
 
     }
 
     public void initiate() {
 
-       // requester = new Requester();
 
         display.titleScreen();
         String userOption = display.showOptions().toUpperCase();
@@ -139,16 +142,18 @@ public class Initializer {
                      * OOJO QUE ACÁ TENGO HARDCODEADO EL -1 PARA QUE HAGA LOS REQUESTS AL PUERTO
                      * 8000 YA QUE EL CLIENTE LO TIENE SETEADO EN 8001
                      */
-                    requester.setIp(HandshakeHandler.getIp()+":"+(Server.PORT-1));
+                    requester.setIp(HandshakeHandler.getIp()+":"+(Server.PORT));
                 }
 
                 System.out.println("Conexión establecida! Juguemosss! =D");
 
 
                 player2 = initializeClient();
+                while (player2== null) {
+                    player2 = initializeClient();
+                }
 
 
-                //requester.setIp("127.0.0.1:8001");
                 String json = Converter.toJson(player.getName());
                 requester.sendPost(json, "/player");
 
@@ -282,7 +287,7 @@ public class Initializer {
 
             if (playerCoords == null) {
                 System.out.println("Conexión rechazada!");
-                return null;
+                return null; //ACÁ ESTÁ EL PROBLEMAAAA
             }
 
             while (!playerCoords.isAllGood() ) {

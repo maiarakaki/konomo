@@ -4,6 +4,7 @@ import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.Event;
 import ar.com.konomo.enums.NinjaType;
 
+import static ar.com.konomo.constants.Constants.ALPHA_OFFSET;
 import static ar.com.konomo.enums.Event.NOTHING_HAPPENED;
 import static ar.com.konomo.enums.Event.NOTHING_TO_SEE_HERE;
 
@@ -28,21 +29,21 @@ public class BoardUpdater {
             switch (whatsThere) {
                 case CHUUNIN:
                 case JOUNIN:
-                    Shinobi ninja = (Shinobi) board.getBoard()[attackTarget.getRow()][attackTarget.getColumn()-10];
+                    Shinobi ninja = (Shinobi) board.getBoard()[attackTarget.getRow()][attackTarget.getColumn()-ALPHA_OFFSET ];
                     updateNinja(ninja);
                     break;
             }
 
         } else {
             Obstacle voidTile = new Obstacle();
-            board.place(attackTarget.getRow(), attackTarget.getColumn()-10, voidTile);
+            board.place(attackTarget.getRow(), attackTarget.getColumn()-ALPHA_OFFSET , voidTile);
             logEvent(NOTHING_HAPPENED, attackTarget);
         }
     }
 
     private void updateNinja(Shinobi ninja) {
         ninja.setStamina(ninja.getStamina()-NinjaType.CHUUNIN.getBaseStamina());
-        Coordinate coord = new Coordinate(ninja.getColumnIndex() +10, ninja.getRowIndex());
+        Coordinate coord = new Coordinate(ninja.getColumnIndex() +ALPHA_OFFSET , ninja.getRowIndex());
         if (ninja.getStamina() <= 0) {
             ninja.setAlive(false);
             if (ninja.getNinjaType() == NinjaType.JOUNIN) {
@@ -60,7 +61,7 @@ public class BoardUpdater {
     public void update(Board board, Intention intention, Shinobi ninja) {
         board.getBoard()[ninja.getRowIndex()][ninja.getColumnIndex()] = null;
         ninja.setRowIndex(intention.getCoordinate().getRow());
-        ninja.setColumnIndex(intention.getCoordinate().getColumn()-10);
+        ninja.setColumnIndex(intention.getCoordinate().getColumn()-ALPHA_OFFSET );
     }
 
     public void update(String [][] knownBoard, Board actualEnemyBoard, Coordinate target){
@@ -70,7 +71,7 @@ public class BoardUpdater {
 
             whatsThere = jackpotChecker.whatIsThere(target, actualEnemyBoard);
             if (whatsThere == NinjaType.JOUNIN) {
-                int jouninStamina = actualEnemyBoard.getBoard()[target.getRow()][target.getColumn()-10].getStamina();
+                int jouninStamina = actualEnemyBoard.getBoard()[target.getRow()][target.getColumn()-ALPHA_OFFSET ].getStamina();
                 event = classifier.decideEvent(jouninStamina);
                 valueToWrite = decideJouninValue(event);
 
@@ -102,7 +103,7 @@ public class BoardUpdater {
 
     private void writeBoard(Coordinate coordinate, String value, String[][] board){
         try {
-            board[coordinate.getRow()][coordinate.getColumn()-10] = value;
+            board[coordinate.getRow()][coordinate.getColumn()-ALPHA_OFFSET ] = value;
         }catch (Exception ex) {
             System.out.println(ex.getMessage() + "jksldañjfklds error escribiendo en el board imaginariooo");
         }

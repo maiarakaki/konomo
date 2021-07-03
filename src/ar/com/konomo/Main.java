@@ -5,8 +5,6 @@ import ar.com.konomo.server.logic.Game;
 
 
 public class Main {
-    public static final int NINJAS = 3;
-    public static final int BOARD_SIZE = 5;
 
     public static void main(String[] args) {
         Game game = new Game(Integer.parseInt(args[0]));
@@ -15,7 +13,7 @@ public class Main {
             game.start();
 
             System.gc();
-            game = new Game(Integer.parseInt(args[0]));
+            game = game.restart(Integer.parseInt(args[0]));
         }
         game.quit();
     }

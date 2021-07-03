@@ -5,14 +5,9 @@ import ar.com.konomo.entity.Board;
 
 public class BoardMaker {
 
-    static int BORDER_PADDING = 2;
     static int OFFSET = 2;
-    static int BOARD_SIZE = 5;
     public static String[] yAxisLabels= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"};
 
-/*    public String[][] getBoard() {
-        return screenBoard;
-    }*/
 
     public ScreenBoard create(Borders borderSets) {
         ScreenBoard screenBoard = new ScreenBoard();

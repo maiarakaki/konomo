@@ -5,7 +5,7 @@ import ar.com.konomo.entity.OpError;
 
 import java.util.List;
 
-import static ar.com.konomo.Main.BOARD_SIZE;
+import static ar.com.konomo.constants.Constants.BOARD_SIZE;
 
 public class CoordinateRangeValidator {
     private OpError errors;
