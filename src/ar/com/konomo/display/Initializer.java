@@ -112,7 +112,7 @@ public class Initializer {
                 System.out.println(input);
 
                 if (Integer.parseInt(input) == 1) {
-                    //  attemptConnection();
+
                     message = null;
                     while (message == null || message.getCode() != 200) {
                         ip = display.serverCreation("Datos de conexión");
@@ -276,18 +276,13 @@ public class Initializer {
         List<Coordinate> coordinates= (display.playerSettings(player));
         playerCoords.setNinjaList(player.getMyNinjas());
         playerCoords.setCoords(coordinates);
-     //   Requester requester = new Requester();
-/*        if (HandshakeHandler.getIp() != null) {
-            requester.setIp(HandshakeHandler.getIp()+":"+"8000");
-        }*/
-        //requester.setIp("127.0.0.1:8001");
 
         try {
             playerCoords = requester.sendPost(playerCoords, "/validate");
 
             if (playerCoords == null) {
                 System.out.println("Conexión rechazada!");
-                return null; //ACÁ ESTÁ EL PROBLEMAAAA
+                return null;
             }
 
             while (!playerCoords.isAllGood() ) {
