@@ -305,7 +305,10 @@ public class GM {
                 moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, playerInTurn.getLocalBoard());
                 intention.setValid(moveisValid);
             } else {
-                intention.setValid(true);
+
+                if (intention.getCoordinate().isValid()) {
+                    intention.setValid(true);
+                }
             }
             i ++;
         }

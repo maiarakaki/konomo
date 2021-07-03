@@ -142,7 +142,7 @@ public class Initializer {
                      * OOJO QUE ACÁ TENGO HARDCODEADO EL -1 PARA QUE HAGA LOS REQUESTS AL PUERTO
                      * 8000 YA QUE EL CLIENTE LO TIENE SETEADO EN 8001
                      */
-                    requester.setIp(HandshakeHandler.getIp()+":"+(Server.PORT));
+                    requester.setIp(HandshakeHandler.getIp()+":"+(Server.PORT-1));
                 }
 
                 System.out.println("Conexión establecida! Juguemosss! =D");
