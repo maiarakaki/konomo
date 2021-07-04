@@ -45,9 +45,6 @@ public class Initializer {
         NinjaCreator ninjaCreator = new NinjaCreator();
         PlayerFactory playerFactory = new PlayerFactory(ninjaCreator);
         scan = new Scanner(System.in);
-        /**
-         * hay que borrar este player????
-         */
         player = playerFactory.create(NINJAS, BOARD_SIZE);
 
     }

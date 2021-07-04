@@ -52,7 +52,7 @@ public class Gameplay {
                     i--;
                 }
 
-            }
+            } //TO TEST intentionSet.put(i,null);
 
             i++;
 
