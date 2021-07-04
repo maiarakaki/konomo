@@ -13,8 +13,9 @@ import ar.com.konomo.server.logic.Game;
 import java.util.List;
 import java.util.Scanner;
 
-import static ar.com.konomo.Main.BOARD_SIZE;
-import static ar.com.konomo.Main.NINJAS;
+import static ar.com.konomo.constants.Constants.BOARD_SIZE;
+import static ar.com.konomo.constants.Constants.NINJAS;
+
 
 public class Initializer {
     private GameMode gameMode;
@@ -49,6 +50,7 @@ public class Initializer {
     }
 
     public void initiate() {
+
 
         display.titleScreen();
         String userOption = display.showOptions().toUpperCase();
@@ -107,7 +109,7 @@ public class Initializer {
                 System.out.println(input);
 
                 if (Integer.parseInt(input) == 1) {
-                    //  attemptConnection();
+
                     message = null;
                     while (message == null || message.getCode() != 200) {
                         ip = display.serverCreation("Datos de conexión");
@@ -117,6 +119,7 @@ public class Initializer {
                         if (message == null) {
                             System.out.println("Falló la conexión!");
                         }
+                        // ver que hago si no me puedo conectar (???)
                         System.out.println("Esperando conexión");
 
                     }
@@ -143,6 +146,9 @@ public class Initializer {
 
 
                 player2 = initializeClient();
+                while (player2== null) {
+                    player2 = initializeClient();
+                }
 
 
                 String json = Converter.toJson(player.getName());
@@ -227,11 +233,14 @@ public class Initializer {
         return input;
     }
 
+    public String getIp() {
+        return ip;
+    }
 
     public Player initializePlayer() {
 
         List<Coordinate> coordinates = (display.playerSettings(player));
-        boolean allGood = gameManager.validate(coordinates, player);
+        boolean allGood = gameManager.coordinatesAreValid(coordinates, player);
         if (allGood) {
             display.retrieveBoard(player);
         } else {
@@ -239,7 +248,7 @@ public class Initializer {
                 OpError errors = gameManager.getErrors();
                 coordinates = display.ammendCoordinates(coordinates, errors);
                 //
-                allGood = gameManager.validate(coordinates, player);
+                allGood = gameManager.coordinatesAreValid(coordinates, player);
             }
         }
         return player;

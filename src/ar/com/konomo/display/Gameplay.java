@@ -4,18 +4,18 @@ import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.Action;
 import ar.com.konomo.operators.CoordinateBuilder;
 import ar.com.konomo.validators.CoordinateFormalValidator;
-import com.sun.jdi.IntegerValue;
+
 
 import java.util.*;
 
-import static ar.com.konomo.Main.NINJAS;
+import static ar.com.konomo.constants.Constants.ALPHA_OFFSET;
+import static ar.com.konomo.constants.Constants.NINJAS;
 
 public class Gameplay {
     private CoordinateFormalValidator coordinateFormalValidator;
     private CoordinateBuilder coordBuilder;
     private Scanner scanner;
     private String userInput;
-    private int userSelection;
 
     public Gameplay (Scanner scanner, CoordinateFormalValidator coordinateFormalValidator, CoordinateBuilder coordinateBuilder){
         this.scanner =  scanner;
@@ -33,32 +33,26 @@ public class Gameplay {
         {
             Shinobi ninja = player.getMyNinjas().get(i);
             if (ninja.isAlive()) {
-             try {
-                askForAction(i, ninja);
-                userInput= scanner.nextLine();
-                userSelection = Integer.parseInt(userInput);
-            }catch (Exception ex) {
-                System.out.println(ex.getMessage()+"Debías seleccionar una opción válida U¬¬");
-                System.out.println("Defaulteamos en ataque :p");
-                userSelection = 1;
-            }
+                askForAction(i, ninja); //pido accion
+
+                String userAction = scanner.nextLine();
+                userAction= askforCoord(userAction, i, ninja );
 
 
-            askforCoord(userSelection);
+                userInput = scanner.nextLine();
 
-            userInput = scanner.nextLine();
+                boolean isValid = coordinateFormalValidator.validate(userInput, userCoordinate);
 
-            boolean isValid = coordinateFormalValidator.validate(userInput, userCoordinate);
 
-            if (isValid) {
-                Coordinate coordOut = coordBuilder.build(userCoordinate);
-                Intention intention = new Intention(Action.values()[userSelection-1], coordOut);
-                intentionSet.put(i, intention);
-            } else {
-                i--;
-            }
+                if (isValid) {
+                    Coordinate coordOut = coordBuilder.build(userCoordinate);
+                    Intention intention = new Intention(getAction(userAction), coordOut);
+                    intentionSet.put(i, intention);
+                } else {
+                    i--;
+                }
 
-            }
+            } //TO TEST intentionSet.put(i,null);
 
             i++;
 
@@ -67,28 +61,30 @@ public class Gameplay {
 
         return intentionSet;
     }
-    private void askforCoord(int input){
-            switch (input) {
-                case 1:
+
+    /**
+     * Asks for user desired action till a valid value is provided.
+     */
+    private String askforCoord(String input, int index, Shinobi ninja){
+        switch (input) {
+                case "1":
                     System.out.println("¿Atacar a dónde?");
                     break;
-                case 2:
+                case "2":
                     System.out.println("¿Mover a dónde?");
                     break;
                 default:
                     System.out.println("Las opciones eran 1 o 2!");
                     System.out.println("Intentémoslo nuevamente...");
-                    try {
-                        input = Integer.parseInt(scanner.nextLine());
-                        askforCoord(input);
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
+                    askForAction(index, ninja);
+                    input = scanner.nextLine();
+                    askforCoord(input, index, ninja);
             }
+        return input;
     }
 
     private void askForAction (int index, Shinobi ninja) {
-        Coordinate ninjaCoord = new Coordinate(ninja.getColumnIndex()+10, ninja.getRowIndex());
+        Coordinate ninjaCoord = new Coordinate(ninja.getColumnIndex()+ALPHA_OFFSET, ninja.getRowIndex());
         CoordinateIn coordToShow = coordBuilder.build(ninjaCoord);
         try {
             if (ninja.isAlive()) {
@@ -114,28 +110,30 @@ public class Gameplay {
              ) {
             if (!set.getValue().isValid()) {
                 askForAction(set.getKey(), ninjas.get(set.getKey()));
-                try {
-                    userInput= scanner.nextLine();
-                    userSelection = Integer.parseInt(userInput);
-                }catch (Exception ex) {
-                    System.out.println(ex.getMessage()+"Debías seleccionar una opción válida U¬¬");
-                    System.out.println("Defaulteamos en ataque :p");
-                    userSelection = 1;
-                }
-                askforCoord(userSelection);
+
+                String userAction= scanner.nextLine();
+                userAction= askforCoord(userAction, set.getKey(), ninjas.get(set.getKey()) );
+
 
                 userInput = scanner.nextLine();
 
                 boolean isValid = coordinateFormalValidator.validate(userInput, userCoordinate);
-
                 if (isValid) {
                     Coordinate coordOut = coordBuilder.build(userCoordinate);
-                    Intention intention = new Intention(Action.values()[userSelection-1], coordOut);
+                    Intention intention = new Intention(getAction(userAction), coordOut);
                     intentionsMap.put(set.getKey(), intention);
                 }
             }
         }
         return intentionsMap;
+    }
+
+    private Action getAction(String userAction) {
+        if (userAction.equals("1")){
+            return Action.ATTACK;
+        }else {
+            return Action.MOVE;
+        }
     }
 }
 

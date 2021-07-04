@@ -3,9 +3,7 @@ package ar.com.konomo.display;
 
 public class BoardMaker {
 
-    static int BORDER_PADDING = 2;
     static int OFFSET = 2;
-    static int BOARD_SIZE = 5;
     public static String[] yAxisLabels= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"};
 
 

@@ -4,6 +4,8 @@ import ar.com.konomo.entity.*;
 import ar.com.konomo.enums.Action;
 import ar.com.konomo.operators.CoordinateBuilder;
 
+import static ar.com.konomo.constants.Constants.ALPHA_OFFSET;
+
 public class MoveValidator {
     private OpError opError;
     private static final int DEAD_COMMANDER = 8;
@@ -25,11 +27,11 @@ public class MoveValidator {
                     isValid=true;
                 } else {
                     coordinateIn = builder.build(coordinate);
-                    CoordinateIn ninjaCoordinate = builder.build(new Coordinate(ninja.getColumnIndex()+10, ninja.getRowIndex()));
+                    CoordinateIn ninjaCoordinate = builder.build(new Coordinate(ninja.getColumnIndex()+ALPHA_OFFSET, ninja.getRowIndex()));
                     opError.add(NON_VIABLE_MOVE+": " + NON_VIABLE_MOVE_MSG + "(de "+  ninjaCoordinate.getColumn() + ":" + ninjaCoordinate.getRow() + " a " + coordinateIn.getColumn() + ":" + coordinateIn.getRow() + ")");
                 }
             } else {
-                coordinateIn = builder.build(new Coordinate(ninja.getColumnIndex()+10, ninja.getRowIndex()));
+                coordinateIn = builder.build(new Coordinate(ninja.getColumnIndex()+ALPHA_OFFSET, ninja.getRowIndex()));
                 opError.add(ALREADY_MOVED+": " + ALREADY_MOVED_MSG + " (" + coordinateIn.getColumn() + ":" + coordinateIn.getRow() + ")");
             }
         } else {
@@ -54,7 +56,7 @@ public class MoveValidator {
         boolean isValidRow;
         boolean isValidCol;
 
-        int coordvalue = coordinate.getColumn() -10;
+        int coordvalue = coordinate.getColumn() - ALPHA_OFFSET;
         isValidCol = Math.abs(ninja.getColumnIndex() - coordvalue) < 2;
 
         isValidRow = Math.abs(ninja.getRowIndex() - coordinate.getRow()) < 2;

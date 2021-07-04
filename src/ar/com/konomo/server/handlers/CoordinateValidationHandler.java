@@ -24,10 +24,12 @@ public class CoordinateValidationHandler implements HttpHandler {
 
         PlayerCoords playerCoords = Converter.fromJson(t.getRequestBody(), PlayerCoords.class);
         List<Coordinate> coordinateList = playerCoords.getCoords();
+        OpError errors = playerCoords.getErrors();
+        List <Shinobi> ninjaList = playerCoords.getNinjaList();
 
-
-        boolean allGood = manager.validate(coordinateList, manager.getPlayer2());
-        OpError errors = manager.getErrors();
+        //boolean allGood = manager.validate(coordinateList, ninjaList);
+        boolean allGood = manager.coordinatesAreValid(coordinateList, manager.getPlayer2());
+        errors = manager.getErrors();
         playerCoords.setNinjaList(manager.getPlayer2().getMyNinjas());
         playerCoords.setErrors(errors);
         playerCoords.setAllGood(allGood);

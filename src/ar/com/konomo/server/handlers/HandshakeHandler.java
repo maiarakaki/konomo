@@ -45,6 +45,9 @@ public class HandshakeHandler implements HttpHandler {
 
     }
 
+    public static void setConnected(boolean connection){
+        connected= connection;
+    }
     public static String getIp(){
         return ip;
     }

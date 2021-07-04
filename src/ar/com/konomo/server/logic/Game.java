@@ -8,6 +8,7 @@ import ar.com.konomo.enums.GameState;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.operators.AttackLogger;
 import ar.com.konomo.server.*;
+import ar.com.konomo.server.handlers.HandshakeHandler;
 import ar.com.konomo.server.handlers.ReadyHandler;
 import ar.com.konomo.validators.WinValidator;
 
@@ -18,8 +19,8 @@ public class Game {
     private Server server;
     private GM gameManager;
     private Display display;
-    private Player player1;
-    private Player player2;
+    private static Player player1;
+    private static Player player2;
     private WinValidator winValidator;
     private List<Coordinate> coordinates;
     public static GameMode mode;
@@ -35,11 +36,7 @@ public class Game {
         display = new Display();
         requester = new Requester();
         initializer = new Initializer(display, gameManager, requester);
-        try {
-            server = new Server(gameManager, port);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
+        server = new Server(gameManager, port);
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
@@ -50,8 +47,7 @@ public class Game {
 
 
     public void start(){
-        gameManager.createGame();
-        gameState = GameState.ON;
+        //gameManager.createGame();
         initializer.initiate();
 
         mode = initializer.getGameMode();
@@ -159,11 +155,15 @@ public class Game {
     public void quit(){
 
         display.newScreen("Cya! Gracias por jugar!\n\nﾟ･:,｡★＼(^-^ )♪ありがとう♪( ^-^)/★,｡･:･ﾟ");
-        try {
-            server.stop();
-        } catch (NullPointerException ex) {
-            System.out.println(ex.getMessage());
-        }
+
+    }
+
+    public Game restart(int arg){
+        ReadyHandler.setReady(false);
+        HandshakeHandler.setConnected(false);
+        server.stop();
+        gameState= GameState.ON;
+        return new Game(arg);
     }
 
 }
