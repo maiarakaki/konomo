@@ -1,6 +1,8 @@
 package ar.com.konomo.server.handlers;
 
+import ar.com.konomo.entity.Intention;
 import ar.com.konomo.entity.OpError;
+import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.Converter;
 import ar.com.konomo.entity.IntentionPack;
@@ -10,6 +12,9 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class IntentionHandler implements HttpHandler {
     private GM manager;
@@ -22,6 +27,8 @@ public class IntentionHandler implements HttpHandler {
         IntentionPack clientIntentionPack =  Converter.fromJson(t.getRequestBody(), IntentionPack.class);
         //Map<Integer, Intention> intentions = clientIntentionPack.getIntentions();
         //List<Shinobi> clientNinjas = clientIntentionPack.getNinjaList();
+       // Map<Integer, Intention> intentions = mapIntentions(clientIntentionPack.getIntentions(), manager.getPlayer2().getMyNinjas());
+
 
 
 
@@ -37,6 +44,21 @@ public class IntentionHandler implements HttpHandler {
 
         sendResponse(OK, json, t);
     }
+
+/*    private Map<Integer, Intention> mapIntentions(List<Intention> clientIntentionList, List <Shinobi> playerNinjas){
+        Map<Integer, Intention> clientIntentionsMap = new HashMap<>();
+        for (Intention intention: clientIntentionList
+             ) {
+            int intentionIndex= clientIntentionList.indexOf(intention);
+            if (playerNinjas.get(intentionIndex).isAlive()){
+                clientIntentionsMap.put(intentionIndex, intention);
+            } else {
+                clientIntentionsMap.put(intentionIndex+1, intention);
+            }
+        }
+
+        return clientIntentionsMap;
+    }*/
 
 
     public void sendResponse(int statusCode, String response, HttpExchange exchange) {

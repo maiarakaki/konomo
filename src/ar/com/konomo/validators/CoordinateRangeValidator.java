@@ -33,24 +33,29 @@ public class CoordinateRangeValidator {
 
     public boolean validate(List<Coordinate> coordinates){
         boolean success= true;
-        int i = 1;
+        int index = 1;
+/*        for (int i = 0 ; i < coordinates.size(); i++) {
+            //
+        }*/
          for (Coordinate coordinate:coordinates
              ) {
+             if (coordinate != null) {
 
-             boolean xIsValid = xIsValid(coordinate.getColumn());
-             boolean yIsValid = yIsValid(coordinate.getRow());
+                 boolean xIsValid = xIsValid(coordinate.getColumn());
+                 boolean yIsValid = yIsValid(coordinate.getRow());
 
-             coordinate.setValid(xIsValid && yIsValid);
+                 coordinate.setValid(xIsValid && yIsValid);
 
-             if (!xIsValid) {
-                 errors.add(X_OUT_OF_RANGE +": " + X_OUT_OF_RANGE_MSG + i);
-                 success = false;
+                 if (!xIsValid) {
+                     errors.add(X_OUT_OF_RANGE +": " + X_OUT_OF_RANGE_MSG + index);
+                     success = false;
+                 }
+                 if (!yIsValid) {
+                     errors.add(Y_OUT_OF_RANGE +": " + Y_OUT_OF_RANGE_MSG + index);
+                     success = false;
+                 }
              }
-             if (!yIsValid) {
-                 errors.add(Y_OUT_OF_RANGE +": " + Y_OUT_OF_RANGE_MSG + i);
-                 success = false;
-             }
-             i++;
+             index++;
         }
          return success;
     }

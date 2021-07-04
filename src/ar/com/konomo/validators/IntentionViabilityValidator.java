@@ -4,6 +4,7 @@ import ar.com.konomo.entity.Coordinate;
 import ar.com.konomo.entity.Intention;
 import ar.com.konomo.entity.OpError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IntentionViabilityValidator {
@@ -18,9 +19,22 @@ public class IntentionViabilityValidator {
         errors = new OpError();
     }
 
+    private List<Intention> sanitizeNulls(List<Intention> intentionsList){
+        List<Intention> noNulls = new ArrayList<>();
+
+        for (Intention intention: intentionsList
+             ) {
+            if (intention != null) {
+                noNulls.add(intention);
+            }
+        }
+        return noNulls;
+    }
+
     public boolean isViable(List<Intention> intentionsList){
         boolean isViable= false;
-        int intentionNum= intentionsList.size();
+        List<Intention> intentionsWithoutNulls = sanitizeNulls(intentionsList);
+        int intentionNum= intentionsWithoutNulls.size();
         final int INT1 = 0;
         final int INT2 = 1;
         final int INT3 = 2;

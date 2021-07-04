@@ -186,12 +186,26 @@ public class GM {
         }
     }
 
+    private Map <Integer, Intention>  denullifyIntentions(Map <Integer, Intention> map){
+        Map <Integer, Intention> denulledMap = new HashMap<>();
+
+        for (Map.Entry<Integer, Intention> entry: map.entrySet()
+             ) {
+            if (entry.getValue()!= null) {
+                denulledMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return denulledMap;
+    }
+
     public void updateBoards(Player player, Map <Integer, Intention> intentionMap, Board enemyBoard) {
         attackLogger.clear();
         BoardUpdater boardUpdater = new BoardUpdater();
         Board myBoard = player.getLocalBoard();
         String[][] knownEnemyBoard = player.getEnemyBoard();
         List <Shinobi> movedNinjas = new ArrayList<>();
+        intentionMap = denullifyIntentions(intentionMap);
 
         for (Map.Entry<Integer, Intention> record: intentionMap.entrySet()
         ) {
@@ -268,7 +282,11 @@ public class GM {
         List <Coordinate> coordinates = new ArrayList<>();
         for (Intention intention: clientIntentions
         ) {
-            coordinates.add(intention.getCoordinate());
+            try{
+                coordinates.add(intention.getCoordinate());
+            } catch (NullPointerException ex) {
+                coordinates.add(null);
+            }
         }
         return coordinates;
     }
@@ -299,15 +317,18 @@ public class GM {
         int i = 0;
         for (Intention intention: clientIntentions
         ) {
-            if (intention.getAction() == Action.MOVE) {
+            if (intention != null && intention.getAction() == Action.MOVE) {
                 Shinobi ninja = playerInTurn.getMyNinjas().get(i);
                 Coordinate coordinate = intention.getCoordinate();
                 moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, playerInTurn.getLocalBoard());
                 intention.setValid(moveisValid);
             } else {
-
-                if (intention.getCoordinate().isValid()) {
-                    intention.setValid(true);
+                try {
+                    if (intention.getCoordinate().isValid()) {
+                        intention.setValid(true);
+                    }
+                } catch (NullPointerException ex) {
+                    //If intention is null I just need to skip it
                 }
             }
             i ++;
