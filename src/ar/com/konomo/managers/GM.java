@@ -107,54 +107,6 @@ public class GM {
     public boolean validate(Map<Integer, Intention> playerIntentions, Player player) {
         List <Intention> intentions = getIntentionList(playerIntentions);
         return validate (intentions, player);
-
-      /*  boolean allValid = true;
-        boolean commanderIsAlive = player.getMyNinjas().get(NINJAS - 1).isAlive();
-        List <Coordinate> coordinates = getIntentionTargets(playerIntentions);
-        try {
-            if (coordinateRangeValidator.validate(coordinates)) {
-                List<Intention> intentionList = getIntentionList(playerIntentions);
-                if(intentionViabilityValidator.isViable(intentionList)){
-                    for (Map.Entry<Integer, Intention> record : playerIntentions.entrySet()
-                    ) {
-                        record.getValue().setValid(true);
-                        if (record.getValue().getAction() == Action.MOVE) {
-                            Shinobi ninja = player.getMyNinjas().get(record.getKey());
-                            Coordinate coordinate = record.getValue().getCoordinate();
-                            boolean moveIsValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, player.getLocalBoard());
-                            if (!moveIsValid) {
-                                record.getValue().setValid(false);
-
-                                allValid =false;
-                            }
-                        }
-
-                    }
-                    if (!allValid) {
-                        errors.addAll(moveValidator.getError());
-                        moveValidator.getError().clear();
-                    }
-
-                } else {
-                    errors.addAll(intentionViabilityValidator.getErrors());
-                    intentionViabilityValidator.getErrors().clear();
-                    allValid =false;
-                }
-            } else {
-                errors.addAll(coordinateRangeValidator.getErrors());
-                coordinateRangeValidator.getErrors().clear();
-                allValid =false;
-            }
-
-
-
-        }catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        return allValid;
-
-       */
     }
 
     public OpError getErrors(){
@@ -186,26 +138,12 @@ public class GM {
         }
     }
 
-    private Map <Integer, Intention>  denullifyIntentions(Map <Integer, Intention> map){
-        Map <Integer, Intention> denulledMap = new HashMap<>();
-
-        for (Map.Entry<Integer, Intention> entry: map.entrySet()
-             ) {
-            if (entry.getValue()!= null) {
-                denulledMap.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        return denulledMap;
-    }
-
     public void updateBoards(Player player, Map <Integer, Intention> intentionMap, Board enemyBoard) {
         attackLogger.clear();
         BoardUpdater boardUpdater = new BoardUpdater();
         Board myBoard = player.getLocalBoard();
         String[][] knownEnemyBoard = player.getEnemyBoard();
         List <Shinobi> movedNinjas = new ArrayList<>();
-        intentionMap = denullifyIntentions(intentionMap);
 
         for (Map.Entry<Integer, Intention> record: intentionMap.entrySet()
         ) {
@@ -282,11 +220,7 @@ public class GM {
         List <Coordinate> coordinates = new ArrayList<>();
         for (Intention intention: clientIntentions
         ) {
-            try{
-                coordinates.add(intention.getCoordinate());
-            } catch (NullPointerException ex) {
-                coordinates.add(null);
-            }
+            coordinates.add(intention.getCoordinate());
         }
         return coordinates;
     }
@@ -314,25 +248,25 @@ public class GM {
         boolean commanderIsAlive = player.getMyNinjas().get(NINJAS -1).isAlive();
         boolean moveisValid;
 
-        int i = 0;
-        for (Intention intention: clientIntentions
-        ) {
-            if (intention != null && intention.getAction() == Action.MOVE) {
-                Shinobi ninja = playerInTurn.getMyNinjas().get(i);
+
+        for (int i = 0 ; i < clientIntentions.size(); i++) {
+            Intention intention = clientIntentions.get(i);
+            Shinobi ninja = playerInTurn.getMyNinjas().get(i);
+            if (!ninja.isAlive()) {
+                ninja = playerInTurn.getMyNinjas().get(i+1);
+            }
+
+            if (intention.getAction() == Action.MOVE) {
                 Coordinate coordinate = intention.getCoordinate();
                 moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, playerInTurn.getLocalBoard());
                 intention.setValid(moveisValid);
-            } else {
-                try {
-                    if (intention.getCoordinate().isValid()) {
-                        intention.setValid(true);
-                    }
-                } catch (NullPointerException ex) {
-                    //If intention is null I just need to skip it
+            }else {
+                if (intention.getCoordinate().isValid()) {
+                    intention.setValid(true);
                 }
             }
-            i ++;
         }
+
     return moveValidator.getError().getErrors().isEmpty();
     }
 

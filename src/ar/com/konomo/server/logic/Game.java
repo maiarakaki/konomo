@@ -26,6 +26,7 @@ public class Game {
     public static GameMode mode;
     private Initializer initializer;
     private Requester requester;
+    private int port;
 
     public static volatile GameState gameState = GameState.ON;
 
@@ -42,6 +43,7 @@ public class Game {
         gameManager.createGame();
         player1 = gameManager.getPlayer1();
         player2 = gameManager.getPlayer2();
+        this.port = port;
     }
 
 
@@ -67,6 +69,7 @@ public class Game {
                  */
                 requester.sendGet("/ready", Message.class);
                 play();
+                restart(port);
             }
         }
     }
