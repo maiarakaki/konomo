@@ -1,6 +1,8 @@
 package ar.com.konomo.server.handlers;
 
+import ar.com.konomo.entity.Intention;
 import ar.com.konomo.entity.OpError;
+import ar.com.konomo.entity.Shinobi;
 import ar.com.konomo.managers.GM;
 import ar.com.konomo.server.Converter;
 import ar.com.konomo.entity.IntentionPack;
@@ -10,6 +12,9 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class IntentionHandler implements HttpHandler {
     private GM manager;
@@ -30,7 +35,27 @@ public class IntentionHandler implements HttpHandler {
 
         String json = Converter.toJson(clientIntentionPack);
 
+        if (allGood) {
+            Map <Integer, Intention> map =  mapIntentions(clientIntentionPack.getIntentions(), manager.getPlayer2().getMyNinjas());
+            manager.updateBoards(manager.getPlayer2(), map, manager.getPlayer1().getLocalBoard());
+        }
+
         sendResponse(OK, json, t);
+    }
+
+    //TODO check if this madafacka breaks
+    private Map<Integer, Intention> mapIntentions(List<Intention> cilentIntentions, List<Shinobi> ninjas){
+        Map <Integer, Intention> map = new HashMap<>();
+        int i=0;
+
+        for (Shinobi ninja: ninjas
+             ) {
+            if (ninja.isAlive()){
+                map.put(i, cilentIntentions.get(i));
+                i++;
+            }
+        }
+        return map;
     }
 
 

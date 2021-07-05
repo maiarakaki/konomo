@@ -12,8 +12,7 @@ import ar.com.konomo.validators.*;
 
 import java.util.*;
 
-import static ar.com.konomo.constants.Constants.BOARD_SIZE;
-import static ar.com.konomo.constants.Constants.NINJAS;
+import static ar.com.konomo.constants.Constants.*;
 
 
 public class GM {
@@ -130,7 +129,7 @@ public class GM {
                 } else {
                     ninjas.get(coords.indexOf(coordinate)).setNinjaType(NinjaType.CHUUNIN);
                 }
-                ninjas.get(coords.indexOf(coordinate)).setColumnIndex(coordinate.getColumn()-10);
+                ninjas.get(coords.indexOf(coordinate)).setColumnIndex(coordinate.getColumn()-ALPHA_OFFSET);
                 ninjas.get(coords.indexOf(coordinate)).setRowIndex(coordinate.getRow());
             }
         } catch (Exception ex) {
@@ -248,24 +247,24 @@ public class GM {
         boolean commanderIsAlive = player.getMyNinjas().get(NINJAS -1).isAlive();
         boolean moveisValid;
 
+        int i = 0;
+        for (Shinobi ninja:player.getMyNinjas()) {
+            if (ninja.isAlive()) {
+                Intention intention = clientIntentions.get(i);
+                if (intention.getAction() == Action.MOVE) {
+                    Coordinate coordinate = intention.getCoordinate();
+                    moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, playerInTurn.getLocalBoard());
+                    intention.setValid(moveisValid);
 
-        for (int i = 0 ; i < clientIntentions.size(); i++) {
-            Intention intention = clientIntentions.get(i);
-            Shinobi ninja = playerInTurn.getMyNinjas().get(i);
-            if (!ninja.isAlive()) {
-                ninja = playerInTurn.getMyNinjas().get(i+1);
-            }
-
-            if (intention.getAction() == Action.MOVE) {
-                Coordinate coordinate = intention.getCoordinate();
-                moveisValid = moveValidator.isValid(coordinate, ninja, commanderIsAlive, playerInTurn.getLocalBoard());
-                intention.setValid(moveisValid);
-            }else {
-                if (intention.getCoordinate().isValid()) {
-                    intention.setValid(true);
+                } else {
+                    if (intention.getCoordinate().isValid()) {
+                        intention.setValid(true);
+                    }
                 }
+                i++;
             }
         }
+
 
     return moveValidator.getError().getErrors().isEmpty();
     }
