@@ -26,24 +26,22 @@ public class Game {
     public static GameMode mode;
     private Initializer initializer;
     private Requester requester;
-    private int port;
 
     public static volatile GameState gameState = GameState.ON;
 
 
 
-    public Game (int port){
+    public Game (){
         gameManager = new GM();
         display = new Display();
         requester = new Requester();
         initializer = new Initializer(display, gameManager, requester);
-        server = new Server(gameManager, port);
+        server = new Server(gameManager);
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
         player1 = gameManager.getPlayer1();
         player2 = gameManager.getPlayer2();
-        this.port = port;
     }
 
 
@@ -69,7 +67,6 @@ public class Game {
                  */
                 requester.sendGet("/ready", Message.class);
                 play();
-                restart(port);
             }
         }
     }
@@ -151,7 +148,7 @@ public class Game {
 
 
         display.newScreen ("GAME OVER\n Ganador: " + winValidator.getWinner());
-        restart(port);
+        restart();
 
     }
 
@@ -161,12 +158,12 @@ public class Game {
 
     }
 
-    public Game restart(int arg){
+    public Game restart(){
         ReadyHandler.setReady(false);
         HandshakeHandler.setConnected(false);
         server.stop();
         gameState= GameState.ON;
-        return new Game(arg);
+        return new Game();
     }
 
 }

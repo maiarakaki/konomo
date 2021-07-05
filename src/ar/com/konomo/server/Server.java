@@ -12,11 +12,10 @@ public class Server {
     private HandshakeHandler handshakeHandler = new HandshakeHandler();
     private HttpServer server;
     private GM manager;
-    private Initializer initializer;
     public static int PORT;
 
-    public Server(GM manager, int port) {
-        this.PORT = 8000+port;
+    public Server(GM manager) {
+        this.PORT = 8000;
         this.manager = manager;
         try {
             /**
