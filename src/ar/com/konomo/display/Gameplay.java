@@ -52,7 +52,7 @@ public class Gameplay {
                     i--;
                 }
 
-            } //TO TEST intentionSet.put(i,null);
+            }
 
             i++;
 
@@ -108,7 +108,7 @@ public class Gameplay {
 
         for (Map.Entry<Integer, Intention> set: intentionsMap.entrySet()
              ) {
-            if (!set.getValue().isValid()) {
+            if (set.getValue()!= null && !set.getValue().isValid()) {
                 askForAction(set.getKey(), ninjas.get(set.getKey()));
 
                 String userAction= scanner.nextLine();

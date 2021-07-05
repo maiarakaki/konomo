@@ -110,13 +110,21 @@ public class Client {
         List<Shinobi> movedNinjas = new ArrayList<>();
         for (Map.Entry<Integer, Intention> intention : playerIntentions.entrySet()
         ) {
-            Shinobi myNinja = player.getMyNinjas().get(intention.getKey());
-            if (intention.getValue().getAction() == Action.MOVE) {
-                movedNinjas.add(myNinja);
-                boardUpdater.update(player.getLocalBoard(),intention.getValue(), myNinja);
-                myNinja.setLastActionTaken(Action.MOVE);
+            try {
+                Shinobi myNinja = player.getMyNinjas().get(intention.getKey());
+                if (!myNinja.isAlive()) {
+                    myNinja = player.getMyNinjas().get(intention.getKey()+1);
+                }
+
+                if (intention.getValue().getAction() == Action.MOVE) {
+                    movedNinjas.add(myNinja);
+                    boardUpdater.update(player.getLocalBoard(),intention.getValue(), myNinja);
+                    myNinja.setLastActionTaken(Action.MOVE);
+                }
+                NinjaPlacer.place(movedNinjas, player.getLocalBoard());
+            } catch (NullPointerException ex) {
+                //if a Null pointer exception occurs, I just need to skip this intention
             }
-            NinjaPlacer.place(movedNinjas, player.getLocalBoard());
         }
 
     }

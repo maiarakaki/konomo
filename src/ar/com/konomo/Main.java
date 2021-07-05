@@ -11,8 +11,9 @@ public class Main {
 
         while (Game.gameState != GameState.QUIT) {
             game.start();
-            System.gc();
-            game = game.restart(Integer.parseInt(args[0]));
+
+            //System.gc();
+          // game = game.restart(Integer.parseInt(args[0]));
         }
         game.quit();
     }
