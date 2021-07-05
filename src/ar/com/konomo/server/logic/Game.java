@@ -32,24 +32,22 @@ public class Game {
 
 
 
-    public Game (int port){
+    public Game (){
         gameManager = new GM();
         display = new Display();
         requester = new Requester();
         initializer = new Initializer(display, gameManager, requester);
-        server = new Server(gameManager, port);
+        server = new Server(gameManager);
         coordinates = new ArrayList<>();
         winValidator = new WinValidator();
         gameManager.createGame();
         player1 = gameManager.getPlayer1();
         player2 = gameManager.getPlayer2();
-        this.port = port;
     }
 
 
 
     public void start(){
-        //gameManager.createGame();
         initializer.initiate();
 
         mode = initializer.getGameMode();
@@ -69,7 +67,7 @@ public class Game {
                  */
                 requester.sendGet("/ready", Message.class);
                 play();
-                restart(port);
+
             }
         }
     }
@@ -158,15 +156,15 @@ public class Game {
     public void quit(){
 
         display.newScreen("Cya! Gracias por jugar!\n\nﾟ･:,｡★＼(^-^ )♪ありがとう♪( ^-^)/★,｡･:･ﾟ");
-
+        restart();
     }
 
-    public Game restart(int arg){
+    public Game restart(){
         ReadyHandler.setReady(false);
         HandshakeHandler.setConnected(false);
         server.stop();
         gameState= GameState.ON;
-        return new Game(arg);
+        return new Game();
     }
 
 }
