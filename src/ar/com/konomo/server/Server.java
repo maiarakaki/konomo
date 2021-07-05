@@ -14,16 +14,14 @@ public class Server {
     private GM manager;
     public static int PORT;
 
-    public Server(GM manager, int port) throws ServerRunningException{
-        this.PORT = 8000+port;
+    public Server(GM manager){
+        this.PORT = 8000;
         this.manager = manager;
         try {
             /**
              * cambiar el ip al ip que me da hamachi en el primer argumento de InetSocketAdress
              * sino, poner acá la ipv4 de ipconfig
              */
-
-            try {
                 server = HttpServer.create(new InetSocketAddress(PORT), 0);
                 server.createContext("/connect", new HandshakeHandler());
                 server.createContext("/ready", new ReadyHandler());
@@ -37,9 +35,7 @@ public class Server {
 
                 server.setExecutor(null); // creates a default executor
                 server.start();
-            } catch (BindException exception) {
-                throw new ServerRunningException("Server is still running!");
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

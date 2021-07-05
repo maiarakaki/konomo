@@ -149,7 +149,7 @@ public class Game {
 
 
         display.newScreen ("GAME OVER\n Ganador: " + winValidator.getWinner());
-        restart(port);
+        restart();
 
     }
 
